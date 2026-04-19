@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trò Chơi Phân Loại Rác — Góc Kỹ Năng</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1215;
+    --ink2: #374151;
+    --ink3: #6b7280;
+    --paper: #f7f4ee;
+    --paper2: #faf9f7;
+    --paper3: #e5d5d8;
+    --accent: #10b981;
+    --accent-red: #e11d48;
+    --accent-blue: #3b82f6;
+    --accent-gold: #f59e0b;
+    --border: rgba(26, 18, 21, 0.12);
+    --shadow: 0 4px 16px rgba(26, 18, 21, 0.06);
+    --radius: 12px;
+  }
+
+  body {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: 0.5;
+  }
+
+  .page { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; }
+
+  .header { margin-bottom: 32px; text-align: center; }
+  .header-eyebrow {
+    font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    color: #e11d48; font-weight: 600; margin-bottom: 10px;
+  }
+  .header h1 {
+    font-size: clamp(28px, 5vw, 42px);
+    line-height: 1.2; font-weight: 700;
+    color: var(--ink); margin-bottom: 12px;
+  }
+  .header p { color: var(--ink2); font-size: 14px; max-width: 500px; margin: 0 auto; }
+
+  .stats-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    background: white; border: 1px solid var(--border);
+    padding: 12px 20px; border-radius: 50px;
+    margin-bottom: 24px; box-shadow: var(--shadow);
+  }
+  .stat { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+  .stat-label { font-size: 11px; text-transform: uppercase; color: var(--ink3); font-weight: 500; }
+
+  .game-container {
+    background: white; border: 1px solid var(--border);
+    border-radius: 20px; padding: 40px 20px;
+    text-align: center; box-shadow: var(--shadow);
+    margin-bottom: 24px; min-height: 320px;
+    display: flex; flex-direction: column; justify-content: center;
+    position: relative;
+  }
+  .progress-container {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 4px; background: var(--paper3);
+    border-top-left-radius: 20px; border-top-right-radius: 20px;
+    overflow: hidden;
+  }
+  .progress-bar { height: 100%; background: #10b981; width: 0%; transition: width 0.3s ease; }
+
+  #trash-item { position: relative; }
+  .trash-emoji { font-size: 80px; margin-bottom: 10px; display: block; }
+  .trash-name { font-size: 24px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+  .trash-hint { font-size: 14px; color: var(--ink3); font-style: italic; }
+
+  .bins-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+  }
+  @media (min-width: 600px) { .bins-grid { grid-template-columns: repeat(4, 1fr); } }
+
+  .bin {
+    border: 2px solid var(--border); border-radius: 16px;
+    padding: 20px 10px; cursor: pointer; transition: all 0.2s;
+    background: white; position: relative; overflow: hidden;
+    text-align: center;
+  }
+  .bin:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+  .bin-icon { font-size: 32px; margin-bottom: 10px; display: block; }
+  .bin-label { font-size: 13px; font-weight: 700; text-transform: uppercase; }
+
+  .bin.tai-che { border-color: #10b981; color: #10b981; }
+  .bin.thuc-pham { border-color: #f59e0b; color: #f59e0b; }
+  .bin.nguy-hai { border-color: #e11d48; color: #e11d48; }
+  .bin.con-lai { border-color: #3b82f6; color: #3b82f6; }
+
+  .bin.tai-che:hover { background: #10b9810a; }
+  .bin.thuc-pham:hover { background: #f59e0b0a; }
+  .bin.nguy-hai:hover { background: #e11d480a; }
+  .bin.con-lai:hover { background: #3b82f60a; }
+
+  .overlay {
+    position: fixed; inset: 0; background: rgba(26, 18, 21, 0.85);
+    backdrop-filter: blur(8px); z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 20px;
+  }
+  .overlay.show { opacity: 1; pointer-events: auto; }
+
+  .feedback-box, .victory-box, .gameover-box {
+    background: white; border-radius: 24px; padding: 32px;
+    max-width: 440px; width: 100%; text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  }
+
+  .fb-icon { font-size: 50px; margin-bottom: 16px; }
+  .fb-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .fb-msg { font-size: 15px; color: var(--ink2); margin-bottom: 24px; line-height: 1.6; }
+  .fb-btn, .re-btn {
+    background: var(--ink); color: white; border: none;
+    padding: 12px 24px; border-radius: 12px; font-weight: 600;
+    cursor: pointer; transition: opacity 0.2s; width: 100%;
+  }
+
+  .feedback-box.wrong .fb-title { color: #e11d48; }
+
+  .victory-icon { font-size: 64px; margin-bottom: 16px; }
+  .victory-box h2 { font-size: 24px; margin-bottom: 12px; }
+  .victory-box p { font-size: 14px; color: var(--ink2); margin-bottom: 24px; }
+
+  .guide-section {
+    margin-top: 48px; background: white; border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px;
+  }
+  .guide-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .guide-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
+  .guide-item { font-size: 14px; line-height: 1.5; }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+  .dot.tc { background: #10b981; }
+  .dot.tp { background: #f59e0b; }
+  .dot.nh { background: #e11d48; }
+  .dot.cl { background: #3b82f6; }
+
+  @keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+  .pop { animation: pop 0.3s ease-out; }
+
+</style>
+</head>
+<body>
+
+<div class="page">
+  <header class="header">
+    <div class="header-eyebrow">Góc Kỹ Năng</div>
+    <h1>Phân Loại Rác Thải</h1>
+    <p>Giúp thành phố sạch đẹp bằng cách đưa rác vào đúng thùng quy định nhé!</p>
+  </header>
+
+  <div class="stats-bar">
+    <div class="stat"><span class="stat-label">Điểm</span> <span id="score-display">0</span></div>
+    <div class="stat" id="lives-display">❤️❤️❤️</div>
+    <div class="stat"><span class="stat-label">Cấp</span> <span id="level-display">1</span></div>
+  </div>
+
+  <div class="game-container">
+    <div class="progress-container">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    <div id="trash-item">
+      <span class="trash-emoji" id="trash-emoji">📦</span>
+      <div class="trash-name" id="trash-name">Đang tải...</div>
+      <div class="trash-hint" id="trash-hint">Hãy chọn thùng phù hợp</div>
+    </div>
+    <div id="level-badge" style="position:absolute; bottom:12px; right:20px; font-size:11px; font-weight:600; color:var(--ink3); background:var(--paper); padding:4px 10px; border-radius:20px;">0/10</div>
+  </div>
+
+  <div class="bins-grid">
+    <div class="bin tai-che" onclick="classify('tai-che')">
+      <span class="bin-icon">♻️</span>
+      <span class="bin-label">Tái Chế</span>
+    </div>
+    <div class="bin thuc-pham" onclick="classify('thuc-pham')">
+      <span class="bin-icon">🍎</span>
+      <span class="bin-label">Thực Phẩm</span>
+    </div>
+    <div class="bin nguy-hai" onclick="classify('nguy-hai')">
+      <span class="bin-icon">⚠️</span>
+      <span class="bin-label">Nguy Hại</span>
+    </div>
+    <div class="bin con-lai" onclick="classify('con-lai')">
+      <span class="bin-icon">🗑️</span>
+      <span class="bin-label">Còn Lại</span>
+    </div>
+  </div>
+
+  <div class="guide-section">
+    <div class="guide-title">💡 Phân loại nhanh</div>
+    <div class="guide-grid">
+      <div class="guide-item"><span class="dot tc"></span><strong>Tái chế:</strong> Giấy, nhựa, kim loại, thủy tinh, Vải, đồ da, Đồ gỗ, Cao su, Thiết bị điện.</div>
+      <div class="guide-item"><span class="dot tp"></span><strong>Thực phẩm:</strong> Thức ăn thừa, rau củ quả, thịt cá.</div>
+      <div class="guide-item"><span class="dot nh"></span><strong>Nguy hại:</strong> Pin, thuốc, hóa chất, bóng đèn.</div>
+      <div class="guide-item"><span class="dot cl"></span><strong>Còn lại:</strong> Cồng kềnh, Vỏ các loại, tu làm vườn, Chất thải làm vườn, một số nhựa thải.</div>
+    </div>
+    <div style="margin-top: 16px; font-size: 13px; border-top: 1px solid var(--border); padding-top: 12px;">
+      <a href="https://thuvienphapluat.vn/cong-van/Tai-nguyen-Moi-truong/Cong-van-9368-BTNMT-KSONMT-2023-huong-dan-ky-thuat-ve-phan-loai-chat-thai-ran-sinh-hoat-585228.aspx" target="_blank" style="color: var(--accent); text-decoration: underline; display: flex; align-items: center; gap: 4px; font-weight: 500;">
+        <span>📖</span> Xem hướng dẫn kỹ thuật chi tiết của Bộ TN&MT
+      </a>
+    </div>
+  </div>
+</div>
+
+<div id="victory-overlay" class="overlay">
+  <div class="victory-box">
+    <div class="victory-icon">🏆</div>
+    <h2>Chúc mừng bạn đã hoàn thành 5 cấp độ!</h2>
+    <p>Bạn đã thể hiện kiến thức tuyệt vời trong việc phân loại rác thải. <strong>Cảm ơn bạn đã dành thời gian học cách bảo vệ môi trường</strong> — hành động nhỏ của bạn hôm nay sẽ tạo nên thay đổi lớn cho Trái Đất ngày mai.</p>
+    <button class="re-btn" onclick="restartGame()">Chơi lại lần nữa! 🔄</button>
+  </div>
+</div>
+
+<div id="gameover-overlay" class="overlay">
+  <div class="gameover-box">
+    <h2 id="go-title" style="font-size:24px; margin-bottom:12px;">Kết Thúc!</h2>
+    <div class="final-score" id="go-score" style="font-size:48px; font-weight:800; color:var(--accent-red); margin-bottom:8px;">0</div>
+    <p id="go-msg" style="margin-bottom:24px;">Điểm của bạn</p>
+    <button class="re-btn" onclick="restartGame()">🔄 Chơi Lại</button>
+  </div>
+</div>
+
+<div id="feedback-overlay" class="overlay">
+  <div class="feedback-box" id="feedback-box">
+    <div class="fb-icon" id="fb-icon">⚠️</div>
+    <div class="fb-title" id="fb-title">Xem lại nhé!</div>
+    <div class="fb-msg" id="fb-msg"></div>
+    <button class="fb-btn" onclick="nextItem()">Tiếp theo →</button>
+  </div>
+</div>
+
+<script>
+const ITEMS = [
+  // NHÓM 1: TÁI CHẾ
+  { emoji:"📦", name:"Thùng carton", hint:"Ép dẹt, giảm kích thước.", bin:"tai-che", explanation:"Nhóm 1.1.2: Thùng, bìa carton thuộc nhóm giấy tái chế." },
+  { emoji:"📰", name:"Báo cũ / Giấy viết", hint:"Xếp gọn, không nhiễm dẩn.", bin:"tai-che", explanation:"Nhóm 1.1.2: Sách, báo, giấy viết thu gom để tái chế." },
+  { emoji:"🧴", name:"Chai nhựa sữa tắm", hint:"Tháo nắp, loại bỏ nước bên trong.", bin:"tai-che", explanation:"Nhóm 1.2.1: Bao bì nhựa đựng mỹ phẩm thuộc nhựa tái chế." },
+  { emoji:"🥤", name:"Ly nhựa / Cốc nhựa", hint:"Loại bỏ sản phẩm bên trong.", bin:"tai-che", explanation:"Nhóm 1.2.2: Ly, cốc nhựa có thể thu gom tái chế." },
+  { emoji:"🍲", name:"Xoong nồi kim loại", hint:"Loại bỏ thức ăn thừa.", bin:"tai-che", explanation:"Nhóm 1.3.2: Đồ dùng nhà bếp kim loại thuộc kim loại tái chế." },
+  { emoji:"🥄", name:"Thìa inox / Dĩa sắt", hint:"Bó gọn các vật sắc nhọn.", bin:"tai-che", explanation:"Nhóm 1.3.2: Vật dụng kim loại nhỏ được thu gom tái chế." },
+  { emoji:"🍷", name:"Chai thủy tinh bia/rượu", hint:"Tháo nắp, thu gọn cẩn thận.", bin:"tai-che", explanation:"Nhóm 1.4.1: Chai lọ thủy tinh đựng đồ uống là thủy tinh tái chế." },
+  { emoji:"🏺", name:"Bình hoa thủy tinh", hint:"Giữ nguyên vẹn để tái sử dụng.", bin:"tai-che", explanation:"Nhóm 1.4.2: Đồ trang trí thủy tinh thuộc tái chế/tái sử dụng." },
+  { emoji:"👕", name:"Quần áo cũ", hint:"Thu gọn, giữ sạch.", bin:"tai-che", explanation:"Nhóm 1.5.1: Vải, quần áo, phụ kiện có thể tái chế/tái sử dụng." },
+  { emoji:"👟", name:"Giày dép cũ", hint:"Vệ sinh sơ bộ, thu gọn.", bin:"tai-che", explanation:"Nhóm 1.5.1: Giày dép, phụ kiện thuộc nhóm vải, đồ da tái chế." },
+  { emoji:"🧸", name:"Đồ chơi gỗ", hint:"Tái sử dụng nếu còn nguyên.", bin:"tai-che", explanation:"Nhóm 1.6.1: Đồ chơi, vật dụng gỗ thuộc nhóm đồ gỗ tái chế." },
+  { emoji:"📱", name:"Điện thoại di động", hint:"Giữ nguyên hình dạng, không tháo rời.", bin:"tai-che", explanation:"Nhóm 1.8.1: Thiết bị điện tử nhỏ chứa linh kiện quý cần tái chế." },
+  { emoji:"🖱️", name:"Chuột máy tính / Dây cáp", hint:"Cuộn gọn dây, giữ nguyên hình dạng.", bin:"tai-che", explanation:"Nhóm 1.8.1: Phụ kiện máy tính thuộc điện tử tái chế." },
+  { emoji:"📺", name:"Tivi cũ", hint:"Không tháo rời linh kiện.", bin:"tai-che", explanation:"Nhóm 1.8.2: Thiết bị điện tử lớn có quy trình tái chế đặc biệt." },
+  { emoji:"🧺", name:"Thau nhựa / Chậu nhựa", hint:"Loại bỏ nước, giảm kích thước.", bin:"tai-che", explanation:"Nhóm 1.2.2: Đồ gia dụng nhựa thuộc nhóm nhựa tái chế." },
+  { emoji:"📠", name:"Máy in / Máy quét", hint:"Giữ nguyên hình dạng.", bin:"tai-che", explanation:"Nhóm 1.8.2: Thiết bị văn phòng điện tử thuộc nhóm tái chế." },
+  { emoji:"🍳", name:"Chảo kim loại hỏng", hint:"Vệ sinh sạch dầu mỡ.", bin:"tai-che", explanation:"Nhóm 1.3.2: Vật dụng nhà bếp kim loại thuộc kim loại tái chế." },
+  { emoji:"👜", name:"Vali / Túi xách cũ", hint:"Làm sạch, xếp gọn.", bin:"tai-che", explanation:"Nhóm 1.5.1: Đồ da, vải, vali thuộc nhóm phụ kiện tái chế." },
+  { emoji:"🧣", name:"Rèm cửa cũ nát", hint:"Vải không dính hóa chất.", bin:"tai-che", explanation:"Nhóm 1.5.1: Rèm cửa, chăn màn bằng vải thuộc nhóm tái chế." },
+  { emoji:"🪵", name:"Khay gỗ hỏng", hint:"Gỗ gia dụng nhỏ.", bin:"tai-che", explanation:"Nhóm 1.6.1: Khay, hộp gỗ thuộc nhóm đồ gỗ tái chế/tái sử dụng." },
+  { emoji:"🚲", name:"Săm xe / Lốp xe", hint:"Cuộn gọn, bó chặt.", bin:"tai-che", explanation:"Nhóm 1.7.2: Vật dụng cao su như săm lốp xe thuộc tái chế." },
+  { emoji:"🕹️", name:"Tay cầm chơi game", hint:"Thiết bị điện tử nhỏ.", bin:"tai-che", explanation:"Nhóm 1.8.1: Tay cầm máy game là thiết bị điện tử tái chế." },
+  { emoji:"📠", name:"Máy Fax cũ", hint:"Thiết bị văn phòng lớn.", bin:"tai-che", explanation:"Nhóm 1.8.2: Máy Fax, máy in thuộc điện tử lớn tái chế." },
+  { emoji:"🍚", name:"Nồi cơm điện", hint:"Thiết bị điện gia dụng.", bin:"tai-che", explanation:"Nhóm 1.8.2: Các loại nồi điện, bếp từ thuộc điện tử tái chế." },
+  { emoji:"💨", name:"Quạt sưởi hỏng", hint:"Thiết bị điện gia dụng.", bin:"tai-che", explanation:"Nhóm 1.8.2: Quạt điện, quạt sưởi thuộc thiết bị điện tái chế." },
+  { emoji:"🔦", name:"Đèn LED", hint:"Thiết bị chiếu sáng.", bin:"tai-che", explanation:"Nhóm 1.8.1: Các loại đèn LED thuộc thiết bị điện tử tái chế." },
+  { emoji:"🔌", name:"Dây cáp điện", hint:"Phụ kiện điện tử.", bin:"tai-che", explanation:"Nhóm 1.8.1: Dây cáp, dây sạc thuộc phụ kiện điện tử tái chế." },
+  
+
+  // NHÓM 2: THỰC PHẨM
+  { emoji:"🍛", name:"Thức ăn thừa", hint:"Đựng trong túi kín.", bin:"thuc-pham", explanation:"Nhóm 2.1: Thức ăn dư thừa sau bữa ăn là rác thực phẩm." },
+  { emoji:"🍎", name:"Trái cây hư hỏng", hint:"Gói kín, ngăn mùi.", bin:"thuc-pham", explanation:"Nhóm 2.2: Trái cây, rau củ hỏng là rác thực phẩm hữu cơ." },
+  { emoji:"🥦", name:"Cuống rau / Vỏ củ", hint:"Phần thải bỏ sau sơ chế.", bin:"thuc-pham", explanation:"Nhóm 2.2: Rau củ quả sau sơ chế thuộc rác thực phẩm." },
+  { emoji:"🥩", name:"Thịt gia súc bỏ đi", hint:"Đựng trong túi kín.", bin:"thuc-pham", explanation:"Nhóm 2.2: Sản phẩm từ thịt động vật là rác thực phẩm." },
+  { emoji:"🐟", name:"Lòng cá / Đầu tôm", hint:"Xử lý nhanh tránh mùi.", bin:"thuc-pham", explanation:"Nhóm 2.2: Phế phẩm thủy hải sản thuộc rác thực phẩm." },
+  { emoji:"🥪", name:"Bánh mì hết hạn", hint:"Loại bỏ bao bì nhựa.", bin:"thuc-pham", explanation:"Nhóm 2.1: Thực phẩm hết hạn sử dụng thuộc rác thực phẩm." },
+
+  // NHÓM 3.1: NGUY HẠI
+  { emoji:"🔋", name:"Pin cũ / Ắc quy", hint:"Không tháo rời.", bin:"nguy-hai", explanation:"Nhóm 3.1.3: Pin chứa kim loại nặng, cực kỳ nguy hại." },
+  { emoji:"💡", name:"Bóng đèn huỳnh quang", hint:"Bảo quản cẩn thận.", bin:"nguy-hai", explanation:"Nhóm 3.1.2: Bóng đèn chứa thủy ngân là chất thải nguy hại." },
+  { emoji:"🌡️", name:"Nhiệt kế thủy ngân", hint:"Tuyệt đối không làm vỡ.", bin:"nguy-hai", explanation:"Nhóm 3.1.2: Thủy ngân rất độc, cần xử lý nguy hại." },
+  { emoji:"💉", name:"Kim tiêm y tế", hint:"Để trong hộp cứng.", bin:"nguy-hai", explanation:"Nhóm 3.1.1: Kim tiêm, bông băng nhiễm khuẩn là rác nguy hại." },
+  { emoji:"💊", name:"Thuốc hết hạn", hint:"Không vứt vào bồn cầu.", bin:"nguy-hai", explanation:"Nhóm 3.1.1: Dược phẩm hết hạn là rác nguy hại sinh hoạt." },
+  { emoji:"🎨", name:"Vỏ hộp sơn", hint:"Bao bì dính hóa chất.", bin:"nguy-hai", explanation:"Nhóm 3.1.1: Sơn chứa thành phần hóa học nguy hại." },
+  { emoji:"🖨️", name:"Vỏ hộp mực", hint:"Bao bì dính hóa chất.", bin:"nguy-hai", explanation:"Nhóm 3.1.1: Mực chứa thành phần hóa học nguy hại." },
+  { emoji:"🧤", name:"Giẻ lau dính chất tẩy rửa", hint:"Dính hóa chất.", bin:"nguy-hai", explanation:"Nhóm 3.1.1: Giẻ lau dính hóa chất là rác nguy hại." },
+  { emoji:"🧤", name:"Găng tay dính dầu mỡ", hint:"Dính hóa chất.", bin:"nguy-hai", explanation:"Nhóm 3.1.1: Găng tay dính dầu mỡ là rác nguy hại." },
+  { emoji:"🔥", name:"Bình gas mini", hint:"Không đục thủng.", bin:"nguy-hai", explanation:"Nhóm 3.1.1: Bình gas mini có nguy cơ cháy nổ, là rác nguy hại." },
+  { emoji:"🦟", name:"Chai xịt côn trùng", hint:"Chứa hóa chất độc hại.", bin:"nguy-hai", explanation:"Nhóm 3.1.1: Hóa chất diệt côn trùng là rác nguy hại." },
+  { emoji:"🌽", name:"Bao bì đựng thuốc bảo vệ thực vật", hint:"Chứa hóa chất độc hại.", bin:"nguy-hai", explanation:"Nhóm 3.1.1: Bao bì đựng thuốc bảo vệ thực vật là rác nguy hại." },
+
+  // NHÓM 3.3: CÒN LẠI
+  { emoji:"🥥", name:"Vỏ dừa / Xơ dừa", hint:"Vỏ cứng của quả.", bin:"con-lai", explanation:"Nhóm 3.3.1: Vỏ dừa thuộc rác còn lại, không phải thực phẩm." },
+  { emoji:"🥚", name:"Vỏ trứng", hint:"Vỏ bảo vệ của trứng.", bin:"con-lai", explanation:"Nhóm 3.3.1: Vỏ trứng là chất thải rắn còn lại." },
+  { emoji:"🌰", name:"Vỏ hạt macca/điều", hint:"Vỏ hạt cứng.", bin:"con-lai", explanation:"Nhóm 3.3.1: Vỏ các loại hạt cứng được phân vào rác còn lại." },
+  { emoji:"☕", name:"Bã cà phê / Túi trà", hint:"Bã sau pha chế.", bin:"con-lai", explanation:"Nhóm 3.3.1: Bã cà phê, trà thuộc rác còn lại." },
+  { emoji:"🌽", name:"Lõi ngô / Bã mía", hint:"Phần thải bỏ sau khi ăn.", bin:"con-lai", explanation:"Nhóm 3.3.1: Lõi ngô, xác mía thuộc rác còn lại." },
+  { emoji:"🍃", name:"Lá cây khô / Cỏ", hint:"Chất thải làm vườn.", bin:"con-lai", explanation:"Nhóm 3.3.1: Cành lá rễ thuộc chất thải vườn (rác còn lại)." },
+  { emoji:"👶", name:"Tã / Bỉm em bé", hint:"Gói kín.", bin:"con-lai", explanation:"Nhóm 3.3.3: Tã, bỉm, băng vệ sinh là rác còn lại." },
+  { emoji:"🧻", name:"Giấy vệ sinh đã dùng", hint:"Bỏ vào túi kín.", bin:"con-lai", explanation:"Nhóm 3.3.3: Giấy ăn, giấy vệ sinh đã sử dụng là rác còn lại." },
+  { emoji:"🥡", name:"Hộp xốp đựng cơm", hint:"Dùng một lần.", bin:"con-lai", explanation:"Nhóm 3.3.3: Hộp xốp, sản phẩm nhựa dùng 1 lần là rác còn lại." },
+  { emoji:"🍬", name:"Bã kẹo cao su", hint:"Gói trong mẩu giấy.", bin:"con-lai", explanation:"Nhóm 3.3.3: Bã kẹo cao su là rác còn lại." },
+  { emoji:"🚬", name:"Đầu lọc thuốc lá", hint:"Thu gọn tránh rơi vãi.", bin:"con-lai", explanation:"Nhóm 3.3.3: Đầu lọc thuốc lá là rác còn lại." },
+  { emoji:"🩹", name:"Băng cá nhân", hint:"Bông băng thông thường.", bin:"con-lai", explanation:"Nhóm 3.3.3: Khẩu trang, bông băng (không nhiễm khuẩn) là rác còn lại." },
+  { emoji:"📏", name:"Thước kẻ nhựa hỏng", hint:"Nhựa cứng ko thuộc bao bì.", bin:"con-lai", explanation:"Nhóm 3.3.4: Văn phòng phẩm hỏng là rác còn lại." },
+  { emoji:"🪥", name:"Bàn chải đánh răng", hint:"Dùng cho cá nhân.", bin:"con-lai", explanation:"Nhóm 3.3.4: Bàn chải, vỏ tuýp kem đánh răng là rác còn lại." },
+  { emoji:"🐚", name:"Vỏ nghêu / Sò / Ốc", hint:"Vỏ cứng thủy sản.", bin:"con-lai", explanation:"Nhóm 3.3.5: Vỏ cứng thủy hải sản thuộc rác còn lại." },
+  { emoji:"🏺", name:"Bát gốm / Mảnh sành vỡ", hint:"Hàng gốm sứ.", bin:"con-lai", explanation:"Nhóm 3.3.5: Gốm, sành, sứ thuộc rác còn lại." },
+  { emoji:"🧳", name:"Giày dép nhựa cũ", hint:"Nhựa đúc, cao su tổng hợp.", bin:"con-lai", explanation:"Nhóm 3.3.4: Giày dép nhựa (không tái chế) là rác còn lại." },
+  { emoji:"🎈", name:"Bóng bay xẹp", hint:"Latex hoặc nhựa dẻo.", bin:"con-lai", explanation:"Nhóm 3.3.3: Bóng bay là rác còn lại." },
+  { emoji:"🧪", name:"Vỉ thuốc nhựa hỏng", hint:"Bao bì dược phẩm.", bin:"con-lai", explanation:"Nhóm 3.3.3: Vỏ thuốc, vỉ thuốc nhựa là rác còn lại." },
+  { emoji:"🐕", name:"Phân động vật cảnh", hint:"Đựng túi kín.", bin:"con-lai", explanation:"Nhóm 3.3.2: Phân động vật cảnh thuộc rác còn lại." },
+  { emoji:"🚲", name:"Gốc cây khô", hint:"Làm vườn lớn.", bin:"con-lai", explanation:"Nhóm 3.3.1: Cành cây, gốc cây thuộc rác còn lại." },
+  { emoji:"🏺", name:"Gối mây tre cũ", hint:"Vật liệu tự nhiên.", bin:"con-lai", explanation:"Nhóm 3.3.1: Gối mây, tre, chiếu cói thuộc rác còn lại." },
+  { emoji:"🌾", name:"Rơm / Trấu", hint:"Phụ phẩm nông nghiệp.", bin:"con-lai", explanation:"Nhóm 3.3.1: Rơm, trấu, xơ dừa thuộc rác còn lại." },
+  { emoji:"🩹", name:"Bông tẩy trang", hint:"Sử dụng 1 lần.", bin:"con-lai", explanation:"Nhóm 3.3.3: Bông tẩy trang, khăn ướt dùng 1 lần là rác còn lại." },
+  { emoji:"🔥", name:"Bật lửa hết gas", hint:"Vỏ nhựa chứa gas.", bin:"con-lai", explanation:"Nhóm 3.3.4: Bật lửa nhựa hết gas là rác còn lại." },
+  { emoji:"🥢", name:"Tăm chỉ nha khoa", hint:"Dùng 1 lần.", bin:"con-lai", explanation:"Nhóm 3.3.3: Tăm bông, tăm chỉ nha khoa là rác còn lại." },
+  { emoji:"☕", name:"Xác mía", hint:"Xác cây mía.", bin:"con-lai", explanation:"Nhóm 3.3.1: Xác mía, lõi ngô là rác còn lại." },
+  { emoji:"🧹", name:"Chiếu cói cũ", hint:"Xếp gọn.", bin:"con-lai", explanation:"Nhóm 3.3.1: Chiếu cói, chiếu tre thuộc rác còn lại." },
+  { emoji:"🧴", name:"Vỏ tuýp kem đánh răng", hint:"Bao bì nhựa mềm.", bin:"con-lai", explanation:"Nhóm 3.3.4: Vỏ tuýp kem đánh răng là rác còn lại." },
+  { emoji:"🏢", name:"Cánh cửa cũ", hint:"Cửa gỗ hoặc sắt hỏng.", bin:"con-lai", explanation:"Nhóm 3.2.2: Đồ nội thất cồng kềnh được phân vào nhóm chất thải còn lại." },
+  { emoji:"🛋️", name:"Nệm cũ nát", hint:"Cồng kềnh.", bin:"con-lai", explanation:"Nhóm 3.2.1: Giường, nệm hỏng thuộc rác còn lại." },
+];
+
+let score = 0, lives = 5, level = 1, itemsThisLevel = 0;
+const itemsPerLevel = 10;
+let currentItem = null, usedItems = [], answered = false;
+
+function getRandomItem() {
+  let available = ITEMS.filter(i => !usedItems.includes(i));
+  if (available.length === 0) { usedItems = []; available = ITEMS; }
+  const item = available[Math.floor(Math.random() * available.length)];
+  usedItems.push(item);
+  return item;
+}
+
+function showItem(item) {
+  const emojiEl = document.getElementById('trash-emoji');
+  emojiEl.textContent = item.emoji;
+  emojiEl.classList.remove('pop');
+  void emojiEl.offsetWidth;
+  emojiEl.classList.add('pop');
+  document.getElementById('trash-name').textContent = item.name;
+  document.getElementById('trash-hint').textContent = item.hint;
+  answered = false;
+}
+
+function updateUI() {
+  document.getElementById('score-display').textContent = score;
+  document.getElementById('lives-display').textContent = '❤️'.repeat(lives) || '💀';
+  document.getElementById('level-display').textContent = level + '/5';
+  const pct = (itemsThisLevel / itemsPerLevel) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('level-badge').textContent = `${itemsThisLevel}/${itemsPerLevel}`;
+}
+
+function classify(bin) {
+  if (answered) return;
+  answered = true;
+  if (currentItem.bin === bin) {
+    score += (level >= 3 ? 20 : 10);
+    itemsThisLevel++;
+    updateUI();
+    if (itemsThisLevel >= itemsPerLevel) {
+      if (level >= 5) showVictory();
+      else { level++; itemsThisLevel = 0; updateUI(); setTimeout(nextItem, 400); }
+    } else setTimeout(nextItem, 400);
+  } else {
+    document.getElementById('feedback-box').className = 'feedback-box wrong';
+    document.getElementById('fb-icon').textContent = '⚠️';
+    document.getElementById('fb-title').textContent = 'Xem lại nhé!';
+    const binNames = { 'tai-che': 'Tái chế ✨', 'thuc-pham': 'Thực phẩm 🍎', 'nguy-hai': 'Nguy hại ⚠️', 'con-lai': 'Còn lại 🗑️' };
+    document.getElementById('fb-msg').innerHTML = `Đáp án đúng: <strong>${binNames[currentItem.bin]}</strong><br><br>${currentItem.explanation}`;
+    document.getElementById('feedback-overlay').classList.add('show');
+    lives--; itemsThisLevel++; updateUI();
+    if (lives <= 0) setTimeout(() => { document.getElementById('feedback-overlay').classList.remove('show'); showGameOver(); }, 2000);
+  }
+}
+
+function showVictory() { document.getElementById('victory-overlay').classList.add('show'); }
+
+function nextItem() {
+  document.getElementById('feedback-overlay').classList.remove('show');
+  if (lives <= 0) { showGameOver(); return; }
+  currentItem = getRandomItem();
+  showItem(currentItem);
+}
+
+function showGameOver() {
+  document.getElementById('go-score').textContent = score;
+  const msgs = [[0, 'Thử lại nhé! 💪'], [120, 'Rất giỏi! 🌱'], [200, 'Xuất sắc! 🌍']];
+  let msg = msgs[0][1];
+  for (const [min, m] of msgs) { if (score >= min) msg = m; }
+  document.getElementById('go-msg').textContent = msg;
+  document.getElementById('gameover-overlay').classList.add('show');
+}
+
+function restartGame() {
+  score = 0; lives = 5; level = 1; itemsThisLevel = 0; usedItems = [];
+  document.querySelectorAll('.overlay').forEach(o => o.classList.remove('show'));
+  updateUI(); currentItem = getRandomItem(); showItem(currentItem);
+}
+
+restartGame();
+</script>
+</body>
+</html>
