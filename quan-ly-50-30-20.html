@@ -1,0 +1,617 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink: #1a1215;
+  --ink2: #374151;
+  --ink3: #6b7280;
+  --paper: #f7f4ee;
+  --paper2: #faf9f7;
+  --paper3: #e5d5d8;
+  --accent: #10b981;
+  --accent-blue: #3b82f6;
+  --accent-gold: #f59e0b;
+  --accent-red: #e11d48;
+  --border: rgba(26, 18, 21, 0.12);
+  --shadow: 0 4px 16px rgba(26, 18, 21, 0.06);
+  --radius: 12px;
+}
+
+body {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0; opacity: 0.5;
+}
+
+.app { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 48px 16px 80px; }
+
+h1 { font-size: 28px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.tagline { font-size: 14px; color: var(--ink3); margin-bottom: 32px; }
+
+.income-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+}
+.income-card label {
+  display: block; font-size: 11px; font-weight: 600;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink3); margin-bottom: 12px;
+}
+.income-row { display: flex; gap: 12px; align-items: center; }
+.income-row input[type="text"] {
+  flex: 1;
+  height: 48px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 0 16px;
+  font-size: 18px;
+  font-weight: 700;
+  background: var(--paper2);
+  color: var(--ink);
+  outline: none;
+  transition: all 0.2s;
+}
+.income-row input:focus { border-color: var(--accent-blue); background: white; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+.income-row .currency { font-size: 13px; color: var(--ink3); font-weight: 500; }
+
+.summary-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.summary-item {
+  border-radius: var(--radius);
+  padding: 18px;
+  background: white;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.summary-item .pct-label { font-size: 10px; font-weight: 700; margin-bottom: 6px; letter-spacing: 0.5px; text-transform: uppercase; }
+.summary-item.needs  .pct-label { color: var(--accent-blue); }
+.summary-item.wants  .pct-label { color: var(--accent-gold); }
+.summary-item.saves  .pct-label { color: var(--accent); }
+
+.summary-item .s-name { font-size: 12px; font-weight: 500; margin-bottom: 8px; color: var(--ink2); }
+.summary-item .s-budget { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: var(--ink); }
+.summary-item .s-remaining { font-size: 12px; font-weight: 500; }
+
+.prog-wrap { height: 6px; background: var(--paper3); border-radius: 100px; margin-top: 12px; overflow: hidden; }
+.prog-fill { height: 100%; border-radius: 100px; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+.needs  .prog-fill { background: var(--accent-blue); }
+.wants  .prog-fill { background: var(--accent-gold); }
+.saves  .prog-fill { background: var(--accent); }
+
+.bucket-section {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.bucket-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  cursor: pointer;
+  user-select: none;
+  background: white;
+}
+.bucket-header:hover { background: var(--paper2); }
+.bh-left { display: flex; align-items: center; gap: 16px; }
+.bh-dot { width: 10px; height: 10px; border-radius: 50%; }
+.needs-dot  { background: var(--accent-blue); }
+.wants-dot  { background: var(--accent-gold); }
+.saves-dot  { background: var(--accent); }
+.bh-title { font-size: 15px; font-weight: 600; color: var(--ink); }
+.bh-meta  { font-size: 12px; color: var(--ink3); margin-top: 2px; }
+.bh-right { display: flex; align-items: center; gap: 16px; }
+.bh-spent { font-size: 14px; font-weight: 700; }
+.bh-spent.ok   { color: var(--accent); }
+.bh-spent.warn { color: var(--accent-gold); }
+.bh-spent.over { color: var(--accent-red); }
+.chevron { font-size: 12px; color: var(--ink3); transition: transform 0.2s; }
+.chevron.open { transform: rotate(180deg); }
+
+.bucket-body { padding: 0 24px 24px; border-top: 1px solid var(--border); }
+
+.expense-list { margin-bottom: 16px; padding-top: 8px; }
+.expense-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.expense-item:last-child { border-bottom: none; }
+.expense-item .e-name { flex: 1; font-size: 14px; color: var(--ink2); }
+.expense-item .e-amt  { font-weight: 600; color: var(--ink); }
+.expense-item .e-del  {
+  background: none; border: none; cursor: pointer; color: var(--ink3); font-size: 18px;
+  padding: 4px 8px; border-radius: 6px; transition: all 0.2s;
+}
+.expense-item .e-del:hover { color: var(--accent-red); background: rgba(225, 29, 72, 0.05); }
+
+.add-expense-row { display: flex; gap: 10px; align-items: center; }
+.add-expense-row input[type="text"] {
+  height: 40px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 13px;
+  background: var(--paper2);
+  color: var(--ink);
+  outline: none;
+  transition: all 0.2s;
+}
+.add-expense-row input[type="text"]:focus { border-color: var(--ink); background: white; }
+.add-expense-row .input-name { flex: 2; }
+.add-expense-row .input-amt { flex: 1; font-weight: 600; }
+
+.add-btn {
+  height: 40px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 8px;
+  background: var(--ink);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.2s;
+}
+.add-btn:hover { opacity: 0.9; }
+.add-btn:active { transform: scale(0.97); }
+
+.empty-msg { font-size: 13px; color: var(--ink3); padding: 16px 0; text-align: center; font-style: italic; }
+
+.tip-bar {
+  background: white;
+  border: 1px solid var(--accent-blue);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  font-size: 13px;
+  color: var(--accent-blue);
+  margin-bottom: 24px;
+  line-height: 1.6;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);
+}
+
+.whatif-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: var(--shadow);
+}
+.whatif-card label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink3); display: block; margin-bottom: 12px; }
+.slider-row { display: flex; gap: 16px; align-items: center; }
+.slider-row input[type="range"] { flex: 1; accent-color: var(--ink); height: 4px; cursor: pointer; }
+.slider-val { font-size: 16px; font-weight: 700; color: var(--ink); min-width: 60px; }
+.whatif-result { margin-top: 20px; display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.wi-item { background: var(--paper2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-size: 11px; color: var(--ink3); }
+.wi-item strong { display: block; font-size: 15px; font-weight: 700; color: var(--ink); margin-top: 4px; }
+
+.pdf-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--ink); color: white; border: none;
+  border-radius: 8px; padding: 12px 24px;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: all 0.2s;
+}
+.pdf-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+.reset-btn {
+  background: none; border: 1px solid var(--border); border-radius: 8px;
+  padding: 10px 20px; font-size: 13px; color: var(--ink3); cursor: pointer;
+  transition: all 0.2s;
+}
+.reset-btn:hover { background: var(--paper2); color: var(--accent-red); border-color: var(--accent-red); }
+
+@media (max-width: 600px) {
+  .summary-bar { grid-template-columns: 1fr; }
+  .whatif-result { grid-template-columns: 1fr; }
+  .add-expense-row { flex-direction: column; align-items: stretch; }
+}
+
+@media print {
+  body { background: white; }
+  .tip-bar, .whatif-card, .reset-row, .pdf-btn, .add-expense-row, .e-del, .chevron, body::before { display: none !important; }
+  .app { padding: 0; max-width: 100%; }
+  .bucket-header { border-bottom: 1px solid var(--border); padding: 12px 0; }
+  .bucket-body { display: block !important; padding: 0; }
+  .bucket-section, .income-card, .summary-item { border: none; box-shadow: none; break-inside: avoid; }
+  .print-date { display: block !important; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>Quản lý chi tiêu 50/30/20</h1>
+  <p class="tagline">Phân bổ ngân sách thông minh để đạt tự do tài chính.</p>
+
+  <div class="tip-bar" id="tip-bar">
+    Nhập thu nhập hàng tháng (sau thuế) để bắt đầu phân bổ ngân sách của bạn.
+  </div>
+
+  <div class="income-card">
+    <label>Thu nhập hàng tháng (sau thuế)</label>
+    <div class="income-row">
+      <input type="text" id="income-input" placeholder="Ví dụ: 15.000.000" />
+      <span class="currency">VNĐ / tháng</span>
+    </div>
+  </div>
+
+  <div class="summary-bar">
+    <div class="summary-item needs">
+      <div class="pct-label">50% Thiết yếu</div>
+      <div class="s-name">Nên chi tối đa</div>
+      <div class="s-budget" id="needs-budget">—</div>
+      <div class="s-remaining" id="needs-remaining"></div>
+      <div class="prog-wrap"><div class="prog-fill" id="needs-prog" style="width:0%"></div></div>
+    </div>
+    <div class="summary-item wants">
+      <div class="pct-label">30% Mong muốn</div>
+      <div class="s-name">Nên chi tối đa</div>
+      <div class="s-budget" id="wants-budget">—</div>
+      <div class="s-remaining" id="wants-remaining"></div>
+      <div class="prog-wrap"><div class="prog-fill" id="wants-prog" style="width:0%"></div></div>
+    </div>
+    <div class="summary-item saves">
+      <div class="pct-label">20% Tiết kiệm</div>
+      <div class="s-name">Nên đạt tối thiểu</div>
+      <div class="s-budget" id="saves-budget">—</div>
+      <div class="s-remaining" id="saves-remaining"></div>
+      <div class="prog-wrap"><div class="prog-fill" id="saves-prog" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="bucket-section" id="bucket-needs">
+    <div class="bucket-header" onclick="toggleBucket('needs')">
+      <div class="bh-left">
+        <div class="bh-dot needs-dot"></div>
+        <div>
+          <div class="bh-title">Nhu cầu thiết yếu</div>
+          <div class="bh-meta">Thuê nhà, ăn uống, hóa đơn, xăng xe…</div>
+        </div>
+      </div>
+      <div class="bh-right">
+        <span class="bh-spent ok" id="needs-spent-lbl">0 ₫</span>
+        <span class="chevron open" id="chevron-needs">▼</span>
+      </div>
+    </div>
+    <div class="bucket-body" id="body-needs">
+      <div class="expense-list" id="list-needs">
+        <div class="empty-msg">Chưa có khoản chi nào.</div>
+      </div>
+      <div class="add-expense-row">
+        <input type="text" id="name-needs" class="input-name" placeholder="Tên khoản chi (ví dụ: Tiền nhà)" />
+        <input type="text" id="amt-needs" class="input-amt" placeholder="Số tiền" />
+        <button class="add-btn" onclick="addExpense('needs')">+ Thêm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="bucket-section" id="bucket-wants">
+    <div class="bucket-header" onclick="toggleBucket('wants')">
+      <div class="bh-left">
+        <div class="bh-dot wants-dot"></div>
+        <div>
+          <div class="bh-title">Mong muốn</div>
+          <div class="bh-meta">Ăn ngoài, mua sắm, giải trí, Netflix…</div>
+        </div>
+      </div>
+      <div class="bh-right">
+        <span class="bh-spent ok" id="wants-spent-lbl">0 ₫</span>
+        <span class="chevron open" id="chevron-wants">▼</span>
+      </div>
+    </div>
+    <div class="bucket-body" id="body-wants">
+      <div class="expense-list" id="list-wants">
+        <div class="empty-msg">Chưa có khoản chi nào.</div>
+      </div>
+      <div class="add-expense-row">
+        <input type="text" id="name-wants" class="input-name" placeholder="Tên khoản chi (ví dụ: Xem phim)" />
+        <input type="text" id="amt-wants" class="input-amt" placeholder="Số tiền" />
+        <button class="add-btn" onclick="addExpense('wants')">+ Thêm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="bucket-section" id="bucket-saves">
+    <div class="bucket-header" onclick="toggleBucket('saves')">
+      <div class="bh-left">
+        <div class="bh-dot saves-dot"></div>
+        <div>
+          <div class="bh-title">Tiết kiệm / Đầu tư</div>
+          <div class="bh-meta">Quỹ khẩn cấp, chứng khoán, tiền gửi…</div>
+        </div>
+      </div>
+      <div class="bh-right">
+        <span class="bh-spent ok" id="saves-spent-lbl">0 ₫</span>
+        <span class="chevron open" id="chevron-saves">▼</span>
+      </div>
+    </div>
+    <div class="bucket-body" id="body-saves">
+      <div class="expense-list" id="list-saves">
+        <div class="empty-msg">Chưa có khoản chi nào.</div>
+      </div>
+      <div class="add-expense-row">
+        <input type="text" id="name-saves" class="input-name" placeholder="Tên mục tiêu (ví dụ: Mua máy tính)" />
+        <input type="text" id="amt-saves" class="input-amt" placeholder="Số tiền" />
+        <button class="add-btn" onclick="addExpense('saves')">+ Thêm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="whatif-card">
+    <label>Mô phỏng thay đổi thu nhập</label>
+    <div class="slider-row">
+      <input type="range" id="whatif-slider" min="50" max="200" value="100" step="5" oninput="updateWhatif(this.value)" />
+      <span class="slider-val" id="whatif-pct">100%</span>
+    </div>
+    <div style="margin-top:20px; padding:16px; background:var(--paper); border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-size:12px; color:var(--ink3); font-weight:500;">Thu nhập điều chỉnh</span>
+      <span style="font-size:20px; font-weight:700; color:var(--ink);" id="wi-income">—</span>
+    </div>
+    <div class="whatif-result">
+      <div class="wi-item">Nhu cầu (50%)<strong id="wi-needs">—</strong></div>
+      <div class="wi-item">Mong muốn (30%)<strong id="wi-wants">—</strong></div>
+      <div class="wi-item">Tiết kiệm (20%)<strong id="wi-saves">—</strong></div>
+    </div>
+  </div>
+
+  <div class="print-date" id="print-date" style="display:none; font-size:11px; color:var(--ink3); text-align:right; margin-bottom:12px;"></div>
+  <div class="reset-row" style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+    <button class="pdf-btn" onclick="savePDF()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Xuất bản PDF
+    </button>
+    <button class="reset-btn" onclick="resetAll()">Xóa hết dữ liệu</button>
+  </div>
+</div>
+
+<script>
+const RATIOS = { needs: 0.5, wants: 0.3, saves: 0.2 };
+let expenses = { needs: [], wants: [], saves: [] };
+let openBuckets = { needs: true, wants: true, saves: true };
+
+// Helper: Format number to Vietnamese Currency string
+function fmt(n) {
+  if (!n && n !== 0) return '—';
+  return Math.round(n).toLocaleString('vi-VN') + ' ₫';
+}
+
+// Helper: Parse formatted string back to number
+function parseNumber(str) {
+  if (!str) return 0;
+  // Remove dots (thousands separator)
+  const clean = String(str).replace(/\./g, '').replace(/[^\d]/g, '');
+  return parseInt(clean) || 0;
+}
+
+// Helper: Real-time input formatting
+function formatInputOnType(e) {
+  let cursor = e.target.selectionStart;
+  let oldLen = e.target.value.length;
+  
+  let val = e.target.value.replace(/[^\d]/g, '');
+  if (val === '') {
+    e.target.value = '';
+    return;
+  }
+  
+  let formatted = parseInt(val).toLocaleString('vi-VN');
+  e.target.value = formatted;
+  
+  // Adjust cursor position
+  let newLen = formatted.length;
+  e.target.setSelectionRange(cursor + (newLen - oldLen), cursor + (newLen - oldLen));
+}
+
+function getIncome() {
+  const val = document.getElementById('income-input').value;
+  return parseNumber(val);
+}
+
+function totalSpent(bucket) {
+  return expenses[bucket].reduce((s, e) => s + e.amt, 0);
+}
+
+function updateUI() {
+  const income = getIncome();
+  const buckets = ['needs','wants','saves'];
+
+  buckets.forEach(b => {
+    const budget = income * RATIOS[b];
+    const spent  = totalSpent(b);
+    const left   = budget - spent;
+    const pct    = budget > 0 ? Math.min(100, Math.round((spent / budget) * 100)) : 0;
+
+    document.getElementById(b + '-budget').textContent    = income ? fmt(budget) : '—';
+    document.getElementById(b + '-prog').style.width      = pct + '%';
+
+    const remEl = document.getElementById(b + '-remaining');
+    if (income) {
+      if (left >= 0) {
+        remEl.textContent = 'Còn lại: ' + fmt(left);
+        remEl.style.color = 'var(--ink3)';
+      } else {
+        remEl.textContent = 'Vượt: ' + fmt(Math.abs(left));
+        remEl.style.color = 'var(--accent-red)';
+      }
+    } else {
+      remEl.textContent = '';
+    }
+
+    const lbl = document.getElementById(b + '-spent-lbl');
+    lbl.textContent = fmt(spent);
+    const ratio = budget > 0 ? spent / budget : 0;
+    lbl.className = 'bh-spent ' + (ratio > 1 ? 'over' : ratio > 0.85 ? 'warn' : 'ok');
+  });
+
+  updateTip(income);
+  updateWhatif(document.getElementById('whatif-slider').value);
+}
+
+function updateTip(income) {
+  const tip = document.getElementById('tip-bar');
+  if (!income) {
+    tip.textContent = 'Nhập thu nhập hàng tháng (sau thuế) để bắt đầu phân bổ ngân sách của bạn.';
+    tip.style.borderColor = 'var(--accent-blue)';
+    tip.style.color = 'var(--accent-blue)';
+    tip.style.background = 'white';
+    return;
+  }
+  const totalSpentAll = totalSpent('needs') + totalSpent('wants') + totalSpent('saves');
+  const pct = Math.round((totalSpentAll / income) * 100);
+  const remaining = income - totalSpentAll;
+  
+  if (totalSpentAll === 0) {
+    tip.textContent = 'Thu nhập ' + fmt(income) + ' đã được chia: ' + fmt(income*0.5) + ' · ' + fmt(income*0.3) + ' · ' + fmt(income*0.2) + '. Hãy bắt đầu thêm các khoản chi!';
+  } else if (remaining >= 0) {
+    tip.textContent = 'Bạn đã sử dụng ' + pct + '% thu nhập (' + fmt(totalSpentAll) + '). Còn ' + fmt(remaining) + ' chưa phân bổ.';
+  } else {
+    tip.textContent = 'Cảnh báo: Tổng chi tiêu vượt thu nhập ' + fmt(Math.abs(remaining)) + '! Hãy xem lại các khoản chi.';
+    tip.style.borderColor = 'var(--accent-red)';
+    tip.style.color = 'var(--accent-red)';
+    tip.style.background = 'rgba(225, 29, 72, 0.02)';
+    return;
+  }
+  tip.style.borderColor = 'var(--accent-blue)';
+  tip.style.color = 'var(--accent-blue)';
+  tip.style.background = 'white';
+}
+
+function updateWhatif(val) {
+  document.getElementById('whatif-pct').textContent = val + '%';
+  const income = getIncome();
+  const adj = income * (val / 100);
+  document.getElementById('wi-income').textContent = income ? fmt(adj) : '—';
+  document.getElementById('wi-needs').textContent = income ? fmt(adj * 0.5) : '—';
+  document.getElementById('wi-wants').textContent = income ? fmt(adj * 0.3) : '—';
+  document.getElementById('wi-saves').textContent = income ? fmt(adj * 0.2) : '—';
+}
+
+function renderList(bucket) {
+  const list = document.getElementById('list-' + bucket);
+  if (expenses[bucket].length === 0) {
+    list.innerHTML = '<div class="empty-msg">Chưa có khoản chi nào.</div>';
+    return;
+  }
+  list.innerHTML = expenses[bucket].map((e, i) =>
+    `<div class="expense-item">
+      <span class="e-name">${e.name}</span>
+      <span class="e-amt">${fmt(e.amt)}</span>
+      <button class="e-del" onclick="deleteExpense('${bucket}',${i})" title="Xóa">×</button>
+    </div>`
+  ).join('');
+}
+
+function addExpense(bucket) {
+  const nameEl = document.getElementById('name-' + bucket);
+  const amtEl  = document.getElementById('amt-'  + bucket);
+  const name = nameEl.value.trim();
+  const amt  = parseNumber(amtEl.value);
+  
+  if (!name || !amt || amt <= 0) {
+    if (!name) nameEl.focus();
+    else amtEl.focus();
+    return;
+  }
+  
+  expenses[bucket].push({ name, amt });
+  nameEl.value = '';
+  amtEl.value  = '';
+  nameEl.focus();
+  renderList(bucket);
+  updateUI();
+}
+
+function deleteExpense(bucket, idx) {
+  expenses[bucket].splice(idx, 1);
+  renderList(bucket);
+  updateUI();
+}
+
+function toggleBucket(bucket) {
+  openBuckets[bucket] = !openBuckets[bucket];
+  const body    = document.getElementById('body-' + bucket);
+  const chevron = document.getElementById('chevron-' + bucket);
+  body.style.display    = openBuckets[bucket] ? 'block' : 'none';
+  chevron.className     = 'chevron ' + (openBuckets[bucket] ? 'open' : '');
+}
+
+function resetAll() {
+  if (!confirm('Xóa toàn bộ dữ liệu và bắt đầu lại?')) return;
+  expenses = { needs: [], wants: [], saves: [] };
+  document.getElementById('income-input').value = '';
+  document.getElementById('whatif-slider').value = 100;
+  ['needs','wants','saves'].forEach(b => { 
+    renderList(b);
+    document.getElementById('name-' + b).value = '';
+    document.getElementById('amt-' + b).value = '';
+  });
+  updateUI();
+}
+
+function savePDF() {
+  ['needs','wants','saves'].forEach(b => {
+    openBuckets[b] = true;
+    document.getElementById('body-' + b).style.display = 'block';
+  });
+  const d = new Date();
+  const dateStr = 'Xuất ngày ' + d.toLocaleDateString('vi-VN', { day:'2-digit', month:'2-digit', year:'numeric' });
+  const dateEl = document.getElementById('print-date');
+  dateEl.textContent = dateStr;
+  dateEl.style.display = 'block';
+  
+  setTimeout(() => {
+    window.print();
+    dateEl.style.display = 'none';
+  }, 100);
+}
+
+// Event Listeners
+document.getElementById('income-input').addEventListener('input', (e) => {
+  formatInputOnType(e);
+  updateUI();
+});
+
+['needs','wants','saves'].forEach(b => {
+  const amtInput = document.getElementById('amt-' + b);
+  amtInput.addEventListener('input', formatInputOnType);
+  
+  amtInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') addExpense(b);
+  });
+  
+  document.getElementById('name-' + b).addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('amt-' + b).focus();
+  });
+});
+
+updateUI();
+</script>
+</body>
+</html>
