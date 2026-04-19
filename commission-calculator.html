@@ -112,9 +112,12 @@
   .range-wrap input[type=range] {
     width: 100%; accent-color: var(--accent); height: 4px; cursor: pointer;
   }
-  .range-meta { display: flex; justify-content: space-between; align-items: center; }
+ 
+  .range-meta { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; align-items: center; }
   .range-meta span { font-size: 11px; color: var(--ink3); }
-  .range-val { font-size: 14px; font-weight: 600; color: var(--ink); }
+  .range-meta span:first-child { grid-column: 1; grid-row: 1; }
+  .range-meta span:last-child { grid-column: 2; grid-row: 1; text-align: right; }
+  .range-val { grid-column: 1 / -1; grid-row: 2; text-align: center; font-size: 14px; font-weight: 600; color: var(--ink); margin-top: 2px; }
 
   /* Result */
   .result-section { margin-top: 28px; }
