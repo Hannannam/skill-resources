@@ -37,8 +37,13 @@ body::before {
 
 .app { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 48px 16px 80px; }
 
+.header { margin-bottom: 32px; text-align: center; }
+.header-eyebrow {
+  font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+  color: #e11d48; font-weight: 600; margin-bottom: 10px;
+}
 h1 { font-size: 28px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
-.tagline { font-size: 14px; color: var(--ink3); margin-bottom: 32px; }
+.tagline { font-size: 14px; color: var(--ink3); margin-bottom: 0; }
 
 .income-card {
   background: white;
@@ -247,8 +252,11 @@ h1 { font-size: 28px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
 </head>
 <body>
 <div class="app">
-  <h1>Quản lý chi tiêu 50/30/20</h1>
-  <p class="tagline">Phân bổ ngân sách thông minh để đạt tự do tài chính.</p>
+  <div class="header">
+    <div class="header-eyebrow">Góc Kỹ Năng</div>
+    <h1>Quản lý chi tiêu 50/30/20</h1>
+    <p class="tagline">Phân bổ ngân sách thông minh để đạt tự do tài chính.</p>
+  </div>
 
   <div class="tip-bar" id="tip-bar">
     Nhập thu nhập hàng tháng (sau thuế) để bắt đầu phân bổ ngân sách của bạn.
