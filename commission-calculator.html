@@ -276,7 +276,96 @@
       <div class="formula-text" id="formula-display"></div>
     </div>
   </div>
-
+ 
+  <div class="divider"></div>
+  
+  <!-- Checklist -->
+  <div class="checklist-section">
+    <div class="section-toggle" onclick="toggleChecklist()">
+      <span class="section-toggle-label">✦ Chưa biết mình ở trình độ nào? Làm checklist này</span>
+      <span class="toggle-chevron open" id="cl-chevron">▼</span>
+    </div>
+    <div class="collapsible" id="cl-body" style="max-height: 1000px;">
+      <p class="checklist-intro">Tick vào những điều <strong>bạn có thể làm một cách ổn định</strong> — không phải "đôi khi làm được". Tool sẽ tự gợi ý trình độ phù hợp.</p>
+ 
+      <div class="checklist-group">
+        <div class="checklist-group-label">Kỹ năng vẽ</div>
+        <div class="check-item" onclick="toggleCheck(this)" data-score="1">
+          <div class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="check-text">Mình vẽ được nhân vật đứng thẳng mà anatomy không quá sai</div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)" data-score="1">
+          <div class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="check-text">Mình có thể tô màu và shading cơ bản (không chỉ flat color)</div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)" data-score="2">
+          <div class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="check-text">Người khác có thể nhận ra "phong cách" của mình dù chỉ mờ nhạt</div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)" data-score="2">
+          <div class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="check-text">Mình vẽ được pose động, không chỉ đứng thẳng nhìn thẳng</div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)" data-score="3">
+          <div class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="check-text">Mình vẽ được trang phục phức tạp (giáp, trang sức, chi tiết nhiều lớp) một cách ổn định</div>
+        </div>
+      </div>
+ 
+      <div class="checklist-group">
+        <div class="checklist-group-label">Portfolio & kinh nghiệm</div>
+        <div class="check-item" onclick="toggleCheck(this)" data-score="1">
+          <div class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="check-text">Mình có ít nhất 3–5 tác phẩm hoàn chỉnh (không phải sketch) có thể show cho người khác</div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)" data-score="2">
+          <div class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="check-text">Mình đã hoàn thành ít nhất 1 comm cho người không quen (người lạ, không phải bạn bè)</div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)" data-score="2">
+          <div class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="check-text">Mình đã giao tranh đúng hẹn ít nhất vài lần</div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)" data-score="3">
+          <div class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="check-text">Mình có khách quay lại đặt lần 2, lần 3</div>
+        </div>
+      </div>
+ 
+      <div class="checklist-group">
+        <div class="checklist-group-label">Quản lý công việc</div>
+        <div class="check-item" onclick="toggleCheck(this)" data-score="1">
+          <div class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="check-text">Mình biết mình cần khoảng bao nhiêu giờ để hoàn thành một comm</div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)" data-score="2">
+          <div class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="check-text">Mình có TOS (điều khoản dịch vụ) dù đơn giản: số lần sửa, thời gian giao, chính sách hoàn tiền</div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)" data-score="2">
+          <div class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="check-text">Mình đã xử lý được ít nhất một tình huống khách khó (yêu cầu sửa nhiều, chậm reply, v.v.)</div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)" data-score="3">
+          <div class="check-box"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="check-text">Portfolio của mình có thể tự "bán" mà không cần mình giải thích thêm gì</div>
+        </div>
+      </div>
+ 
+      <!-- Result -->
+      <div class="checklist-result" id="cl-result">
+        <div class="cl-progress"><div class="cl-progress-bar" id="cl-bar" style="width:0%"></div></div>
+        <div class="cl-result-top">
+          <div class="cl-result-icon" id="cl-icon">○</div>
+          <div class="cl-result-title" id="cl-title">Tick vào các mục phù hợp với bạn</div>
+        </div>
+        <div class="cl-result-sub" id="cl-sub">Kết quả sẽ hiện ở đây khi bạn chọn xong.</div>
+        <button class="cl-apply-btn" id="cl-btn" style="display:none" onclick="applySkill()">Áp dụng trình độ này vào máy tính ↓</button>
+      </div>
+    </div>
+  </div>
+ 
+ 
   <div class="divider"></div>
 
   <footer class="footer-note">
