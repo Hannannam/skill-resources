@@ -117,7 +117,7 @@
   .range-meta span { font-size: 11px; color: var(--ink3); }
   .range-meta span:first-child { grid-column: 1; grid-row: 1; }
   .range-meta span:last-child { grid-column: 2; grid-row: 1; text-align: right; }
-  .range-val { grid-column: 1 / -1; grid-row: 2; text-align: center; font-size: 14px; font-weight: 600; color: var(--ink); margin-top: 2px; }
+  .range-val { grid-column: 1 / -1; grid-row: 2; text-align: center; font-size: 14px; font-weight: 600; color: var(--ink3); margin-top: 2px; }
 
   /* Result */
   .result-section { margin-top: 28px; }
@@ -498,18 +498,22 @@ function updateChecklist() {
     if (item.classList.contains('checked')) score += +item.dataset.score;
   });
  
-  const pct = Math.round(score / total * 100);
+  const pct = total ? Math.round(score / total * 100) : 0;
   document.getElementById('cl-bar').style.width = pct + '%';
- 
+
   const level = clLevels.slice().reverse().find(l => score >= l.min) || clLevels[0];
   suggestedSkill = level.skillVal;
- 
+
   const result = document.getElementById('cl-result');
   result.classList.toggle('highlight', score > 0);
+
   document.getElementById('cl-icon').textContent = level.icon;
   document.getElementById('cl-title').textContent = level.title + (score > 0 ? ` (${pct}%)` : '');
-  document.getElementById('cl-sub').textContent = score > 0 ? level.sub : 'Kết quả sẽ hiện ở đây khi bạn chọn xong.';
-  document.getElementById('cl-btn').style.display = score > 0 ? 'inline-block' : 'none';
+  document.getElementById('cl-sub').textContent =
+    score > 0 ? level.sub : 'Kết quả sẽ hiện ở đây khi bạn chọn xong.';
+
+  document.getElementById('cl-btn').style.display =
+    score > 0 ? 'inline-block' : 'none';
 }
  
 function applySkill(val) {
