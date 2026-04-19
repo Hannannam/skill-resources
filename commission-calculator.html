@@ -170,6 +170,36 @@
   .formula-text { font-size: 12px; color: var(--ink2); font-family: 'Be Vietnam Pro', monospace; }
   .formula-text span { color: var(--accent); font-weight: 600; }
 
+   /* Complexity explainer */
+  .complexity-explainer { margin-top: 10px; grid-column: 1 / -1; }
+  .cx-toggle {
+    display: flex; align-items: center; gap: 6px; cursor: pointer;
+    font-size: 12px; color: var(--accent); font-weight: 500;
+    background: none; border: none; padding: 0;
+    font-family: 'Be Vietnam Pro', sans-serif; user-select: none;
+  }
+  .cx-toggle:hover { opacity: 0.75; }
+  .cx-toggle-icon { transition: transform .2s; }
+  .cx-toggle-icon.open { transform: rotate(180deg); }
+  .cx-body { overflow: hidden; max-height: 0; transition: max-height .35s ease; }
+  .cx-body.open { max-height: 900px; }
+  .cx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  @media (max-width: 520px) { .cx-grid { grid-template-columns: 1fr; } }
+  .cx-card {
+    border-radius: 9px; padding: 13px 14px;
+    border: 1.5px solid var(--border); background: white;
+    cursor: pointer; transition: all .15s;
+  }
+  .cx-card:hover { border-color: var(--accent2); }
+  .cx-card.active { border-color: var(--accent); background: var(--paper2); }
+  .cx-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+  .cx-label { font-size: 13px; font-weight: 600; color: var(--ink); }
+  .cx-mult { font-size: 11px; font-weight: 600; color: var(--accent); background: rgba(200,75,47,0.1); padding: 2px 7px; border-radius: 10px; }
+  .cx-desc { font-size: 12px; color: var(--ink2); line-height: 1.55; margin-bottom: 8px; }
+  .cx-examples { display: flex; flex-wrap: wrap; gap: 5px; }
+  .cx-tag { font-size: 11px; padding: 3px 8px; border-radius: 6px; background: var(--paper2); color: var(--ink3); border: 1px solid var(--border); }
+  .cx-card.active .cx-tag { background: var(--paper3); }
+
   /* Footer note */
   .footer-note {
     margin-top: 48px; padding-top: 24px;
@@ -257,7 +287,7 @@
   <div class="divider"></div>
 
   <!-- Skill selector -->
-  <div>
+  <div id="skill-section">
     <p style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px;">Trình độ của bạn</p>
     <div class="skill-row" id="skill-row">
       <button class="skill-btn" data-val="1" onclick="setSkill(this)">Mới bắt đầu</button>
@@ -426,7 +456,71 @@
       </div>
     </div>
   </div>
+
+  <!-- Complexity explainer -->
+  <div class="checklist-section" style="grid-column: 1 / -1; margin-top: 10px;">
+    <div class="section-toggle" onclick="toggleCx()">
+      <span class="section-toggle-label">✦ Không chắc trang phục của bạn thuộc loại nào?</span>
+      <span class="toggle-chevron open" id="cx-chevron">▼</span>
+    </div>
+    <div class="collapsible" id="cx-body" style="max-height: 1000px;">
+        <div class="cx-grid">
+          <div class="cx-card" onclick="setCx(this, '0.9')" data-val="0.9">
+            <div class="cx-card-top">
+              <span class="cx-label">Đơn giản</span>
+              <span class="cx-mult">×0.9</span>
+            </div>
+            <div class="cx-desc">Outfit thường ngày, không có chi tiết đặc biệt. Ít layer, ít phụ kiện.</div>
+            <div class="cx-examples">
+              <span class="cx-tag">áo thun + quần jeans</span>
+              <span class="cx-tag">đồng phục học sinh</span>
+              <span class="cx-tag">casual wear</span>
+            </div>
+          </div>
+          <div class="cx-card active" onclick="setCx(this, '1')" data-val="1">
+            <div class="cx-card-top">
+              <span class="cx-label">Bình thường</span>
+              <span class="cx-mult">×1.0</span>
+            </div>
+            <div class="cx-desc">Trang phục có một vài chi tiết, phụ kiện nhỏ. Không quá đơn giản, không quá phức tạp.</div>
+            <div class="cx-examples">
+              <span class="cx-tag">váy + áo khoác</span>
+              <span class="cx-tag">đồng phục có cravat</span>
+              <span class="cx-tag">streetwear</span>
+            </div>
+          </div>
+          <div class="cx-card" onclick="setCx(this, '1.3')" data-val="1.3">
+            <div class="cx-card-top">
+              <span class="cx-label">Phức tạp</span>
+              <span class="cx-mult">×1.3</span>
+            </div>
+            <div class="cx-desc">Nhiều layer, phụ kiện đáng kể, hoặc chi tiết đặc thù cần vẽ cẩn thận.</div>
+            <div class="cx-examples">
+              <span class="cx-tag">giáp nhẹ</span>
+              <span class="cx-tag">cánh đơn giản</span>
+              <span class="cx-tag">trang phục lolita</span>
+              <span class="cx-tag">trang sức nhiều</span>
+            </div>
+          </div>
+          <div class="cx-card" onclick="setCx(this, '1.6')" data-val="1.6">
+            <div class="cx-card-top">
+              <span class="cx-label">Rất phức tạp</span>
+              <span class="cx-mult">×1.6</span>
+            </div>
+            <div class="cx-desc">OC (original character) với thiết kế dày đặc chi tiết, hoặc trang phục fantasy/sci-fi đòi hỏi nhiều thời gian nghiên cứu ref.</div>
+            <div class="cx-examples">
+              <span class="cx-tag">full armor</span>
+              <span class="cx-tag">cánh chi tiết cao</span>
+              <span class="cx-tag">mecha elements</span>
+              <span class="cx-tag">OC phức tạp</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
  
+     
  
   <div class="divider"></div>
 
@@ -532,6 +626,32 @@ function calc() {
     `<span>${fmt(base)}đ/giờ</span> × ${hours}h × ${type}× (loại tranh) × ${chars}× (nhân vật) × ${complexity}× (độ phức tạp) × ${usage}× (quyền dùng)`;
 }
 
+// Complexity explainer
+function toggleCx() {
+  const body = document.getElementById('cx-body');
+  const chevron = document.getElementById('cx-chevron');
+  const isOpen = body.style.maxHeight !== '0px';
+  body.style.maxHeight = isOpen ? '0px' : '1000px';
+  chevron.classList.toggle('open', !isOpen);
+}
+
+function setCx(card, val) {
+  document.querySelectorAll('.cx-card').forEach(c => c.classList.remove('active'));
+  card.classList.add('active');
+  document.getElementById('complexity').value = val;
+  calc();
+  
+  // Collapse and scroll back to skill section
+  toggleCx();
+  document.getElementById('skill-section').scrollIntoView({ behavior: 'smooth' });
+}
+ 
+function syncCx(val) {
+  document.querySelectorAll('.cx-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.val === val);
+  });
+}
+
 // Checklist logic
 const clLevels = [
   { min: 0,  max: 2,  skillVal: 1, icon: "✏️", title: "Mới bắt đầu",    sub: "Bạn đang ở giai đoạn học — đây là lúc tốt nhất để thử làm vài comm nhỏ với bạn bè, xây dựng portfolio và quen với quy trình làm việc. Chưa cần lo giá cao." },
@@ -583,9 +703,7 @@ function applySkill(val) {
   });
   skillVal = target;
   calc();
-  document.getElementById('cl-body').style.maxHeight = '0px';
-  document.getElementById('cl-chevron').classList.remove('open');
-  document.querySelector('.section-toggle-label').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  document.getElementById('skill-section').scrollIntoView({ behavior: 'smooth' });
 }
  
 function toggleChecklist() {
