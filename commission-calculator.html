@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tính Giá Commission — Dành cho Artist Việt Nam</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1814;
+    --ink2: #4a4843;
+    --ink3: #8a8880;
+    --paper: #f7f4ee;
+    --paper2: #eeeae2;
+    --paper3: #e5e0d6;
+    --accent: #c84b2f;
+    --accent2: #e8793f;
+    --gold: #b8902a;
+    --border: rgba(26,24,20,0.12);
+    --shadow: 0 2px 16px rgba(26,24,20,0.08);
+    --radius: 10px;
+  }
+
+  body {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: 0.5;
+  }
+
+  .page { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; }
+
+  /* Header */
+  .header { margin-bottom: 48px; }
+  .header-eyebrow {
+    font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 10px;
+  }
+  .header h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(32px, 6vw, 52px);
+    line-height: 1.1; font-weight: 400;
+    color: var(--ink); margin-bottom: 12px;
+  }
+  .header h1 em { font-style: italic; color: var(--accent); }
+  .header p { color: var(--ink2); font-size: 14px; max-width: 500px; line-height: 1.7; }
+
+  /* Divider */
+  .divider {
+    height: 1px; background: linear-gradient(90deg, var(--accent) 0%, var(--paper3) 60%);
+    margin: 32px 0; opacity: 0.5;
+  }
+
+  /* Skill indicator row */
+  .skill-row { display: flex; gap: 6px; margin-bottom: 28px; flex-wrap: wrap; }
+  .skill-btn {
+    flex: 1; min-width: 100px;
+    padding: 10px 12px; border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: var(--paper2); cursor: pointer;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 12px; font-weight: 500;
+    color: var(--ink2); transition: all .2s;
+    text-align: center; line-height: 1.4;
+  }
+  .skill-btn:hover { border-color: var(--accent2); color: var(--ink); }
+  .skill-btn.active {
+    background: var(--ink); color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  /* Grid of factors */
+  .factors-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  @media (max-width: 520px) { .factors-grid { grid-template-columns: 1fr; } }
+
+  .factor-card {
+    background: white; border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px;
+    box-shadow: var(--shadow);
+  }
+  .factor-card label {
+    display: block; font-size: 11px; font-weight: 600;
+    letter-spacing: .06em; text-transform: uppercase;
+    color: var(--ink3); margin-bottom: 8px;
+  }
+  .factor-card select {
+    width: 100%; background: var(--paper);
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 7px 10px; font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 13px; color: var(--ink); cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a8880' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+    padding-right: 28px;
+  }
+  .factor-card select:focus { outline: 2px solid var(--accent2); outline-offset: 1px; }
+
+  .range-wrap { display: flex; flex-direction: column; gap: 4px; }
+  .range-wrap input[type=range] {
+    width: 100%; accent-color: var(--accent); height: 4px; cursor: pointer;
+  }
+  .range-meta { display: flex; justify-content: space-between; align-items: center; }
+  .range-meta span { font-size: 11px; color: var(--ink3); }
+  .range-val { font-size: 14px; font-weight: 600; color: var(--ink); }
+
+  /* Result */
+  .result-section { margin-top: 28px; }
+  .result-card {
+    background: var(--ink); color: var(--paper);
+    border-radius: 14px; padding: 28px 28px 24px;
+    position: relative; overflow: hidden;
+  }
+  .result-card::before {
+    content: '';
+    position: absolute; top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(200,75,47,0.25) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .result-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+  .result-label { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: rgba(247,244,238,0.5); margin-bottom: 6px; }
+  .result-price {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 400; line-height: 1; color: white;
+  }
+  .result-hourly { font-size: 12px; color: rgba(247,244,238,0.5); margin-top: 6px; }
+  .tier-pill {
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 12px; font-weight: 600;
+    border: 1px solid rgba(247,244,238,0.2);
+    color: var(--paper); white-space: nowrap; align-self: flex-start;
+  }
+
+  /* Tips */
+  .tips-card {
+    margin-top: 14px; background: white;
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 18px 20px; box-shadow: var(--shadow);
+  }
+  .tips-title { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); margin-bottom: 12px; }
+  .tip { display: flex; gap: 10px; margin-bottom: 10px; font-size: 13px; line-height: 1.6; color: var(--ink2); }
+  .tip:last-child { margin-bottom: 0; }
+  .tip-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 7px; }
+  .tip strong { color: var(--ink); font-weight: 600; }
+
+  /* Formula explainer */
+  .formula-card {
+    margin-top: 14px; background: var(--paper2);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 14px 18px;
+  }
+  .formula-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); margin-bottom: 8px; }
+  .formula-text { font-size: 12px; color: var(--ink2); font-family: 'Be Vietnam Pro', monospace; }
+  .formula-text span { color: var(--accent); font-weight: 600; }
+
+  /* Footer note */
+  .footer-note {
+    margin-top: 48px; padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 12px; color: var(--ink3); line-height: 1.8;
+  }
+  .footer-note a { color: var(--accent); text-decoration: none; }
+  .footer-note a:hover { text-decoration: underline; }
+
+  /* Animations */
+  .page { animation: fadeUp .5s ease both; }
+  @keyframes fadeUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: none; } }
+  .result-price { transition: opacity .2s; }
+  .result-price.flash { opacity: 0.4; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="header">
+    <div class="header-eyebrow">Công cụ cho digital artist Việt Nam</div>
+    <h1>Tính giá<br><em>commission</em><br>của bạn</h1>
+    <p>Điều chỉnh các yếu tố bên dưới để xem khoảng giá phù hợp với trình độ và loại tranh của bạn.</p>
+  </header>
+
+  <div class="divider"></div>
+
+  <!-- Skill selector -->
+  <div>
+    <p style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px;">Trình độ của bạn</p>
+    <div class="skill-row" id="skill-row">
+      <button class="skill-btn" data-val="1" onclick="setSkill(this)">Mới bắt đầu</button>
+      <button class="skill-btn active" data-val="2" onclick="setSkill(this)">Đang học</button>
+      <button class="skill-btn" data-val="3" onclick="setSkill(this)">Khá ổn</button>
+      <button class="skill-btn" data-val="4" onclick="setSkill(this)">Tay nghề tốt</button>
+      <button class="skill-btn" data-val="5" onclick="setSkill(this)">Chuyên nghiệp</button>
+    </div>
+  </div>
+
+  <!-- Factors -->
+  <div class="factors-grid">
+    <div class="factor-card">
+      <label>Loại tranh</label>
+      <select id="type" onchange="calc()">
+        <option value="1">Sketch / lineart đơn giản</option>
+        <option value="1.5">Lineart + flat color</option>
+        <option value="2" selected>Full color (shading cơ bản)</option>
+        <option value="2.8">Full color (shading phức tạp)</option>
+        <option value="3.5">Illustration hoàn chỉnh / scene</option>
+      </select>
+    </div>
+    <div class="factor-card">
+      <label>Số nhân vật</label>
+      <select id="chars" onchange="calc()">
+        <option value="1" selected>1 nhân vật</option>
+        <option value="1.5">2 nhân vật</option>
+        <option value="2">3+ nhân vật</option>
+      </select>
+    </div>
+    <div class="factor-card">
+      <label>Độ phức tạp trang phục</label>
+      <select id="complexity" onchange="calc()">
+        <option value="0.9">Đơn giản (outfit thường)</option>
+        <option value="1" selected>Bình thường</option>
+        <option value="1.3">Phức tạp (giáp, cánh, trang sức...)</option>
+        <option value="1.6">Rất phức tạp (OC chi tiết cao)</option>
+      </select>
+    </div>
+    <div class="factor-card">
+      <label>Quyền sử dụng của khách</label>
+      <select id="usage" onchange="calc()">
+        <option value="1" selected>Cá nhân (avatar, lưu giữ)</option>
+        <option value="1.4">Online công khai (stream, SNS)</option>
+        <option value="2">Thương mại (bán hàng, quảng cáo)</option>
+      </select>
+    </div>
+    <div class="factor-card" style="grid-column: 1 / -1">
+      <label>Thời gian hoàn thành ước tính</label>
+      <div class="range-wrap">
+        <input type="range" id="hours" min="1" max="20" value="5" oninput="calc()">
+        <div class="range-meta">
+          <span>1 giờ</span>
+          <span class="range-val" id="hours-val">5 giờ</span>
+          <span>20 giờ</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="result-section">
+    <div class="result-card">
+      <div class="result-top">
+        <div>
+          <div class="result-label">Khoảng giá gợi ý</div>
+          <div class="result-price" id="price-display">—</div>
+          <div class="result-hourly" id="hourly-display"></div>
+        </div>
+        <span class="tier-pill" id="tier-badge"></span>
+      </div>
+    </div>
+
+    <div class="tips-card" id="tips-card"></div>
+
+    <div class="formula-card">
+      <div class="formula-label">Công thức tính</div>
+      <div class="formula-text" id="formula-display"></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <footer class="footer-note">
+    <p>Đây là ước tính dựa trên thị trường commission Việt Nam — giá thực tế có thể cao hơn hoặc thấp hơn tùy portfolio và cộng đồng của bạn. Đừng ngại điều chỉnh sau vài lần thử.</p>
+    <p style="margin-top:8px">Tài liệu pháp lý tham khảo: <a href="https://thuvienphapluat.vn/van-ban/So-huu-tri-tue/Luat-so-huu-tri-tue-2005-50-2005-QH11-3481.aspx" target="_blank">Luật Sở hữu trí tuệ Việt Nam</a> · <a href="https://memart.vn/tin-tuc/blog/tim-hieu-com-la-gi-trong-ve-va-cac-ung-dung-lien-quan-vi-cb.html" target="_blank">Commission là gì? — MeMart</a></p>
+  </footer>
+
+</div>
+
+<script>
+let skillVal = 2;
+
+const tiers = [
+  { max: 80000, label: "Mới bắt đầu", color: "#6b6860", tips: [
+    "Nên làm 2–3 comm <strong>miễn phí hoặc giá tượng trưng</strong> với bạn bè trước để có portfolio.",
+    "Đừng lo giá thấp — quan trọng nhất lúc này là <strong>học cách làm việc với khách</strong>.",
+    "Mỗi comm hoàn thành là thêm một tác phẩm vào portfolio của bạn."
+  ]},
+  { max: 250000, label: "Đang lên tay", color: "#3a7a20", tips: [
+    "Chụp <strong>WIP (work in progress)</strong> để khách thấy tiến độ — tạo niềm tin rất hiệu quả.",
+    "Viết TOS rõ ràng: số lần sửa cho phép, thời gian giao tranh, chính sách hoàn tiền.",
+    "Có thể bắt đầu nhận comm qua các group Facebook, Discord cộng đồng art VN."
+  ]},
+  { max: 600000, label: "Đang phát triển", color: "#1a5ea8", tips: [
+    "Đã đến lúc <strong>đặt watermark</strong> và quy định rõ quyền sử dụng tranh trong TOS.",
+    "Cân nhắc mở <strong>commission slot</strong> cố định (ví dụ 3 slot/tháng) để quản lý tải công việc.",
+    "Nhớ tính thêm phụ phí cho trang phục phức tạp, nền, và thay đổi ngoài TOS."
+  ]},
+  { max: 1500000, label: "Tay nghề cao", color: "#7a3a9e", tips: [
+    "Nên có <strong>hợp đồng hoặc invoice</strong> cho comm giá cao — bảo vệ cả hai bên.",
+    "Khách mua tranh <strong>không có nghĩa</strong> là mua bản quyền tác giả — hãy ghi rõ điều này.",
+    "Nhận tiền cọc 50% trước khi bắt đầu vẽ là thông lệ chuyên nghiệp, không phải đòi hỏi."
+  ]},
+  { max: Infinity, label: "Chuyên nghiệp", color: "#b83020", tips: [
+    "Ở mức này, <strong>quyền thương mại</strong> cần được định giá riêng và ghi rõ trong hợp đồng.",
+    "Cân nhắc <strong>đăng ký bản quyền tác giả</strong> cho các tác phẩm gốc quan trọng.",
+    "Nên mở rộng sang nền tảng quốc tế: Ko-fi, Gumroad, hay Booth để tiếp cận khách nước ngoài."
+  ]}
+];
+
+const hourlyBase = [0, 15000, 30000, 60000, 110000, 180000];
+
+function setSkill(btn) {
+  document.querySelectorAll('.skill-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  skillVal = +btn.dataset.val;
+  calc();
+}
+
+function fmt(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (n >= 1000) return Math.round(n/1000) + 'K';
+  return n;
+}
+
+function calc() {
+  const type = +document.getElementById('type').value;
+  const chars = +document.getElementById('chars').value;
+  const complexity = +document.getElementById('complexity').value;
+  const hours = +document.getElementById('hours').value;
+  const usage = +document.getElementById('usage').value;
+
+  document.getElementById('hours-val').textContent = hours + ' giờ';
+
+  const base = hourlyBase[skillVal];
+  let price = base * hours * type * chars * complexity * usage;
+
+  let lo, hi;
+  if (price < 50000)       { lo = Math.max(5000,  Math.round(price*0.8/5000)*5000);   hi = Math.round(price*1.3/5000)*5000; }
+  else if (price < 200000) { lo = Math.round(price*0.8/10000)*10000;                  hi = Math.round(price*1.25/10000)*10000; }
+  else if (price < 1000000){ lo = Math.round(price*0.8/50000)*50000;                  hi = Math.round(price*1.25/50000)*50000; }
+  else                     { lo = Math.round(price*0.8/100000)*100000;                 hi = Math.round(price*1.2/100000)*100000; }
+
+  const priceEl = document.getElementById('price-display');
+  priceEl.classList.add('flash');
+  setTimeout(() => {
+    priceEl.textContent = fmt(lo) + ' – ' + fmt(hi) + ' đ';
+    priceEl.classList.remove('flash');
+  }, 120);
+
+  document.getElementById('hourly-display').textContent = '≈ ' + fmt(base) + ' đ/giờ theo trình độ của bạn';
+
+  const mid = (lo + hi) / 2;
+  const tier = tiers.find(t => mid <= t.max);
+  const badge = document.getElementById('tier-badge');
+  badge.textContent = tier.label;
+  badge.style.background = tier.color + '22';
+  badge.style.border = '1px solid ' + tier.color + '55';
+  badge.style.color = '#f7f4ee';
+
+  const tipsHtml = tier.tips.map(t =>
+    `<div class="tip"><div class="tip-dot"></div><div>${t}</div></div>`
+  ).join('');
+  document.getElementById('tips-card').innerHTML =
+    `<div class="tips-title">Gợi ý cho giai đoạn này</div>` + tipsHtml;
+
+  const typeLabel = document.getElementById('type').selectedOptions[0].text.split(' (')[0];
+  const charsLabel = document.getElementById('chars').selectedOptions[0].text;
+  const complexLabel = document.getElementById('complexity').selectedOptions[0].text.split(' (')[0];
+  const usageLabel = document.getElementById('usage').selectedOptions[0].text.split(' (')[0];
+  document.getElementById('formula-display').innerHTML =
+    `<span>${fmt(base)}đ/giờ</span> × ${hours}h × ${type}× (loại tranh) × ${chars}× (nhân vật) × ${complexity}× (độ phức tạp) × ${usage}× (quyền dùng)`;
+}
+
+calc();
+</script>
+</body>
+</html>
