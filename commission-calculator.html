@@ -470,6 +470,66 @@ function calc() {
     `<span>${fmt(base)}đ/giờ</span> × ${hours}h × ${type}× (loại tranh) × ${chars}× (nhân vật) × ${complexity}× (độ phức tạp) × ${usage}× (quyền dùng)`;
 }
 
+// Checklist logic
+const clLevels = [
+  { min: 0,  max: 2,  skillVal: 1, icon: "✏️", title: "Mới bắt đầu",    sub: "Bạn đang ở giai đoạn học — đây là lúc tốt nhất để thử làm vài comm nhỏ với bạn bè, xây dựng portfolio và quen với quy trình làm việc. Chưa cần lo giá cao." },
+  { min: 3,  max: 6,  skillVal: 2, icon: "🎨", title: "Đang học",        sub: "Bạn có nền tảng tốt và đã có chút kinh nghiệm thực tế. Đây là lúc bắt đầu nhận comm chính thức, viết TOS, và học cách xử lý khách hàng." },
+  { min: 7,  max: 10, skillVal: 3, icon: "⭐", title: "Khá ổn",          sub: "Bạn đã có kỹ năng và kinh nghiệm ổn định. Phong cách của bạn đang hình thành rõ ràng — có thể bắt đầu tăng giá và mở slot cố định." },
+  { min: 11, max: 14, skillVal: 4, icon: "🔥", title: "Tay nghề tốt",    sub: "Bạn có portfolio mạnh và quy trình làm việc chuyên nghiệp. Khách quen tin tưởng bạn — đây là lúc xem xét hợp đồng rõ ràng hơn và định giá theo giá trị thực." },
+  { min: 15, max: 99, skillVal: 5, icon: "💎", title: "Chuyên nghiệp",   sub: "Bạn hoạt động như một freelancer chuyên nghiệp. Portfolio tự nói lên tất cả. Cân nhắc mở rộng sang nền tảng quốc tế và bảo vệ bản quyền nghiêm túc hơn." }
+];
+ 
+let suggestedSkill = null;
+ 
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  updateChecklist();
+}
+ 
+function updateChecklist() {
+  const items = document.querySelectorAll('.check-item');
+  let score = 0;
+  let total = 0;
+  items.forEach(item => {
+    total += +item.dataset.score;
+    if (item.classList.contains('checked')) score += +item.dataset.score;
+  });
+ 
+  const pct = Math.round(score / total * 100);
+  document.getElementById('cl-bar').style.width = pct + '%';
+ 
+  const level = clLevels.slice().reverse().find(l => score >= l.min) || clLevels[0];
+  suggestedSkill = level.skillVal;
+ 
+  const result = document.getElementById('cl-result');
+  result.classList.toggle('highlight', score > 0);
+  document.getElementById('cl-icon').textContent = level.icon;
+  document.getElementById('cl-title').textContent = level.title + (score > 0 ? ` (${pct}%)` : '');
+  document.getElementById('cl-sub').textContent = score > 0 ? level.sub : 'Kết quả sẽ hiện ở đây khi bạn chọn xong.';
+  document.getElementById('cl-btn').style.display = score > 0 ? 'inline-block' : 'none';
+}
+ 
+function applySkill(val) {
+  const target = val || suggestedSkill;
+  if (!target) return;
+  document.querySelectorAll('.skill-btn').forEach(b => {
+    b.classList.toggle('active', +b.dataset.val === target);
+  });
+  skillVal = target;
+  calc();
+  document.getElementById('cl-body').style.maxHeight = '0px';
+  document.getElementById('cl-chevron').classList.remove('open');
+  document.querySelector('.section-toggle-label').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+ 
+function toggleChecklist() {
+  const body = document.getElementById('cl-body');
+  const chevron = document.getElementById('cl-chevron');
+  const isOpen = body.style.maxHeight !== '0px';
+  body.style.maxHeight = isOpen ? '0px' : '1000px';
+  chevron.classList.toggle('open', !isOpen);
+}
+
 calc();
 </script>
 </body>
