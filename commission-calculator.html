@@ -44,28 +44,36 @@
   .page { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; }
 
   /* Header */
-  .header { margin-bottom: 48px; text-align: center; }
+  .header { margin-bottom: 16px; text-align: center; }
   .header-eyebrow {
     font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
     color: var(--accent); font-weight: 600; margin-bottom: 10px;
   }
   .header h1 {
     font-family: 'Be Vietnam Pro', sans-serif;
-    font-size: clamp(32px, 6vw, 52px);
+    font-size: clamp(28px, 5.5vw, 44px);
     line-height: 1.1; font-weight: 450;
     color: var(--ink); margin-bottom: 12px;
   }
   .header h1 em { font-style: italic; color: var(--accent); }
   .header p { color: var(--ink2); font-size: 14px; max-width: 500px; line-height: 1.7; }
 
+  .header .disclaimer {
+    font-size: 11px; color: var(--ink3); 
+    max-width: 100%; width: 100%; 
+    margin: 20px 0 0;
+    line-height: 1.6; font-style: italic; text-align: left;
+    display: block;
+  }
+
   /* Divider */
   .divider {
     height: 1px; background: linear-gradient(90deg, var(--accent) 0%, var(--paper3) 60%);
-    margin: 32px 0; opacity: 0.5;
+    margin: 12px 0 32px; opacity: 0.5;
   }
 
   /* Skill indicator row */
-  .skill-row { display: flex; gap: 6px; margin-bottom: 28px; flex-wrap: wrap; }
+  .skill-row { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
   .skill-btn {
     flex: 1; min-width: 100px;
     padding: 10px 12px; border-radius: 8px;
@@ -88,191 +96,182 @@
 
   .factor-card {
     background: white; border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 14px 16px;
-    box-shadow: var(--shadow);
+    border-radius: var(--radius); padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    transition: transform 0.1s;
   }
   .factor-card label {
-    display: block; font-size: 11px; font-weight: 600;
-    letter-spacing: .06em; text-transform: uppercase;
-    color: var(--ink3); margin-bottom: 8px;
+    display: block; font-size: 10px; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink3); margin-bottom: 10px;
   }
   .factor-card select {
-    width: 100%; background: var(--paper);
+    width: 100%; background: var(--paper2);
     border: 1px solid var(--border); border-radius: 6px;
-    padding: 7px 10px; font-family: 'Be Vietnam Pro', sans-serif;
+    padding: 8px 12px; font-family: inherit;
     font-size: 13px; color: var(--ink); cursor: pointer;
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a8880' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 10px center;
-    padding-right: 28px;
+    background-repeat: no-repeat; background-position: right 12px center;
   }
-  .factor-card select:focus { outline: 2px solid var(--accent2); outline-offset: 1px; }
+  .factor-card select:focus { border-color: var(--accent); outline: none; }
 
-  .range-wrap { display: flex; flex-direction: column; gap: 4px; }
+  /* Choice Row (shared for Shot and Rush) */
+  .choice-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .choice-btn {
+    flex: 1; min-width: 80px;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 4px; padding: 12px 8px;
+    border-radius: 8px; border: 1.5px solid var(--border);
+    background: white; cursor: pointer;
+    font-family: inherit; transition: all 0.1s;
+  }
+  .choice-btn:hover:not(.active) { border-color: var(--ink2); background: var(--paper2); }
+  .choice-btn.active { border-color: var(--ink); background: var(--ink); color: white; }
+  .choice-icon { font-size: 18px; line-height: 1; margin-bottom: 2px; opacity: 0.6; }
+  .choice-btn.active .choice-icon { opacity: 1; color: var(--accent2); }
+  .choice-name { font-size: 11px; font-weight: 700; color: inherit; }
+  .choice-sub { font-size: 10px; opacity: 0.7; text-align: center; line-height: 1.2; }
+  .choice-mult { 
+    font-size: 10px; font-weight: 700; 
+    padding: 2px 6px; border-radius: 4px; margin-top: 4px;
+    background: rgba(0,0,0,0.05); color: var(--ink2); 
+  }
+  .choice-btn.active .choice-mult { background: rgba(255,255,255,0.2); color: white; }
+
+  /* Range */
+  .range-wrap { display: flex; flex-direction: column; gap: 6px; }
   .range-wrap input[type=range] {
-    width: 100%; accent-color: var(--accent); height: 4px; cursor: pointer;
+    width: 100%; accent-color: var(--ink); height: 4px; cursor: pointer;
   }
- 
-  .range-meta { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; align-items: center; }
-  .range-meta span { font-size: 11px; color: var(--ink3); }
-  .range-meta span:first-child { grid-column: 1; grid-row: 1; }
-  .range-meta span:last-child { grid-column: 2; grid-row: 1; text-align: right; }
-  .range-val { grid-column: 1 / -1; grid-row: 2; text-align: center; font-size: 14px; font-weight: 600; color: var(--accent2); margin-top: 2px; }
+  .range-meta { display: flex; justify-content: space-between; align-items: center; }
+  .range-meta span { font-size: 10px; color: var(--ink3); font-weight: 600; }
+  .range-val { font-size: 13px; font-weight: 700; color: var(--ink); }
 
-  /* Result */
-  .result-section { margin-top: 28px; }
+  /* Result Summary */
+  .result-section { margin-top: 32px; display: flex; flex-direction: column; gap: 12px; }
   .result-card {
-    background: var(--ink); color: var(--paper);
-    border-radius: 14px; padding: 28px 28px 24px;
-    position: relative; overflow: hidden;
+    background: var(--ink); color: white;
+    border-radius: var(--radius); padding: 24px;
+    display: flex; justify-content: space-between; align-items: flex-end;
   }
-  .result-card::before {
-    content: '';
-    position: absolute; top: -40px; right: -40px;
-    width: 200px; height: 200px;
-    background: radial-gradient(circle, rgba(200,75,47,0.25) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .result-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
-  .result-label { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: rgba(247,244,238,0.5); margin-bottom: 6px; }
+  .result-label { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 8px; }
   .result-price {
-    font-family: 'Be Vietnam Pro', sans-serif;
-    font-size: clamp(28px, 5vw, 42px);
-    font-weight: 700; line-height: 1; color: white;
+    font-size: clamp(24px, 5vw, 36px);
+    font-weight: 800; line-height: 1; letter-spacing: -0.02em;
+    color: white;
   }
-  .result-hourly { font-size: 12px; color: rgba(247,244,238,0.5); margin-top: 6px; }
+  .result-hourly { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 8px; }
   .tier-pill {
-    padding: 6px 14px; border-radius: 20px;
-    font-size: 12px; font-weight: 600;
-    border: 1px solid rgba(247,244,238,0.2);
-    color: var(--paper); white-space: nowrap; align-self: flex-start;
+    padding: 6px 12px; border-radius: 6px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
   }
 
-  /* Tips */
   .tips-card {
-    margin-top: 14px; background: white;
-    border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 18px 20px; box-shadow: var(--shadow);
+    background: white; border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px;
   }
-  .tips-title { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); margin-bottom: 12px; }
-  .tip { display: flex; gap: 10px; margin-bottom: 10px; font-size: 13px; line-height: 1.6; color: var(--ink2); }
+  .tips-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--ink3); margin-bottom: 12px; }
+  .tip { display: flex; gap: 12px; margin-bottom: 10px; font-size: 13px; line-height: 1.5; color: var(--ink2); }
   .tip:last-child { margin-bottom: 0; }
-  .tip-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 7px; }
-  .tip strong { color: var(--ink); font-weight: 600; }
-
-  /* Formula explainer */
+  .tip-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 7px; }
+  
   .formula-card {
-    margin-top: 14px; background: var(--paper2);
-    border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 14px 18px;
+    background: var(--paper2); border: 1.5px dashed var(--border); border-radius: var(--radius);
+    padding: 16px;
   }
-  .formula-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); margin-bottom: 8px; }
-  .formula-text { font-size: 12px; color: var(--ink2); font-family: 'Be Vietnam Pro', monospace; }
-  .formula-text span { color: var(--accent); font-weight: 600; }
+  .formula-label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--ink3); margin-bottom: 8px; }
+  .formula-text { font-size: 11px; color: var(--ink3); line-height: 1.6; word-break: break-all; }
+  .formula-text span { color: var(--ink); font-weight: 700; }
 
-   /* Complexity explainer */
-  .complexity-explainer { margin-top: 10px; grid-column: 1 / -1; }
+  /* Explainer Toggles */
   .cx-toggle {
     display: flex; align-items: center; gap: 6px; cursor: pointer;
-    font-size: 12px; color: var(--accent); font-weight: 500;
-    background: none; border: none; padding: 0;
-    font-family: 'Be Vietnam Pro', sans-serif; user-select: none;
+    font-size: 12px; color: var(--ink); font-weight: 700;
+    background: none; border: none; padding: 4px 0;
+    font-family: inherit;
   }
-  .cx-toggle:hover { opacity: 0.75; }
-  .cx-toggle-icon { transition: transform .2s; }
-  .cx-toggle-icon.open { transform: rotate(180deg); }
-  .cx-body { overflow: hidden; max-height: 0; transition: max-height .35s ease; }
-  .cx-body.open { max-height: 900px; }
-  .cx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
-  @media (max-width: 520px) { .cx-grid { grid-template-columns: 1fr; } }
+  .cx-body { overflow: hidden; max-height: 0; transition: max-height 0.2s ease-out; }
+  .cx-body.open { max-height: 1200px; }
+  .cx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+  @media (max-width: 600px) { .cx-grid { grid-template-columns: 1fr; } }
   .cx-card {
-    border-radius: 9px; padding: 13px 14px;
+    border-radius: 8px; padding: 14px;
     border: 1.5px solid var(--border); background: white;
-    cursor: pointer; transition: all .15s;
+    cursor: pointer; transition: all 0.1s;
   }
-  .cx-card:hover { border-color: var(--accent2); }
-  .cx-card.active { border-color: var(--accent); background: var(--paper2); }
-  .cx-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
-  .cx-label { font-size: 13px; font-weight: 600; color: var(--ink); }
-  .cx-mult { font-size: 11px; font-weight: 600; color: var(--accent); background: rgba(200,75,47,0.1); padding: 2px 7px; border-radius: 10px; }
-  .cx-desc { font-size: 12px; color: var(--ink2); line-height: 1.55; margin-bottom: 8px; }
-  .cx-examples { display: flex; flex-wrap: wrap; gap: 5px; }
-  .cx-tag { font-size: 11px; padding: 3px 8px; border-radius: 6px; background: var(--paper2); color: var(--ink3); border: 1px solid var(--border); }
-  .cx-card.active .cx-tag { background: var(--paper3); }
+  .cx-card.active { border-color: var(--ink); background: var(--paper2); }
+  .cx-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .cx-label { font-size: 12px; font-weight: 700; color: var(--ink); }
+  .cx-mult { font-size: 10px; font-weight: 800; color: var(--accent); background: rgba(225,29,72,0.06); padding: 2px 6px; border-radius: 4px; }
+  .cx-desc { font-size: 12px; color: var(--ink3); line-height: 1.5; margin-bottom: 10px; }
+  .cx-examples { display: flex; flex-wrap: wrap; gap: 4px; }
+  .cx-tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--paper2); color: var(--ink3); border: 1px solid var(--border); }
 
-  /* Footer note */
+  /* Footer */
   .footer-note {
-    margin-top: 48px; padding-top: 24px;
-    border-top: 1px solid var(--border);
-    font-size: 12px; color: var(--ink3); line-height: 1.8;
+    margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border);
+    font-size: 12px; color: var(--ink3); text-align: center;
   }
-  .footer-note a { color: var(--accent); text-decoration: none; }
-  .footer-note a:hover { text-decoration: underline; }
+  .footer-note a { color: var(--ink); text-decoration: underline; font-weight: 600; }
 
-  /* Checklist */
-  .checklist-section { margin-bottom: 36px; }
-  .checklist-intro { font-size: 13px; color: var(--ink2); margin-bottom: 16px; line-height: 1.7; }
-  .checklist-intro strong { color: var(--ink); }
-  .checklist-group { margin-bottom: 14px; }
-  .checklist-group-label {
-    font-size: 11px; font-weight: 600; letter-spacing: .08em;
-    text-transform: uppercase; color: var(--ink3); margin-bottom: 8px;
+  /* Animations */
+  .page { opacity: 0; animation: fadeIn 0.3s ease forwards; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .result-price { transition: color 0.1s; }
+
+  /* Checklist & Collapsible sections */
+  .checklist-section { margin-bottom: 24px; border: 1.5px solid var(--border); border-radius: var(--radius); padding: 16px; background: white; }
+  .section-toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; user-select: none;
   }
+  .section-toggle-label { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--ink); }
+  .toggle-chevron { font-size: 10px; color: var(--ink3); transition: transform 0.2s; }
+  .toggle-chevron.open { transform: rotate(180deg); }
+  
+  .collapsible { overflow: hidden; transition: max-height 0.3s ease; }
+  .checklist-intro { font-size: 12px; color: var(--ink3); margin: 12px 0; line-height: 1.6; }
+  .checklist-group { margin-bottom: 16px; }
+  .checklist-group-label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--ink3); margin-bottom: 8px; }
+  
   .check-item {
     display: flex; align-items: flex-start; gap: 10px;
-    padding: 9px 12px; border-radius: 8px; cursor: pointer;
-    border: 1px solid var(--border); background: white;
-    margin-bottom: 6px; transition: all .15s; user-select: none;
+    padding: 10px 12px; border-radius: 8px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--paper2);
+    margin-bottom: 6px; transition: all 0.1s; user-select: none;
   }
-  .check-item:hover { border-color: var(--accent2); }
-  .check-item.checked { background: var(--paper2); border-color: var(--accent); }
+  .check-item:hover { border-color: var(--ink2); }
+  .check-item.checked { background: var(--ink); border-color: var(--ink); color: white; }
+  
   .check-box {
-    width: 18px; height: 18px; border-radius: 4px; flex-shrink: 0;
+    width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0;
     border: 1.5px solid var(--border); background: white;
     display: flex; align-items: center; justify-content: center;
-    transition: all .15s; margin-top: 1px;
+    margin-top: 2px;
   }
   .check-item.checked .check-box { background: var(--accent); border-color: var(--accent); }
   .check-box svg { display: none; }
   .check-item.checked .check-box svg { display: block; }
-  .check-text { font-size: 13px; color: var(--ink2); line-height: 1.5; }
-  .check-item.checked .check-text { color: var(--ink); }
- 
+  .check-text { font-size: 12px; line-height: 1.4; color: inherit; }
+
   .checklist-result {
-    margin-top: 16px; border-radius: 12px; padding: 18px 20px;
+    margin-top: 16px; border-radius: 8px; padding: 16px;
     border: 1.5px solid var(--border); background: var(--paper2);
-    transition: all .3s;
+    color: var(--ink);
   }
-  .checklist-result.highlight { border-color: var(--accent); background: white; }
-  .cl-result-top { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-  .cl-result-icon { font-size: 22px; }
-  .cl-result-title { font-size: 15px; font-weight: 600; color: var(--ink); }
-  .cl-result-sub { font-size: 13px; color: var(--ink2); line-height: 1.6; }
-  .cl-progress { height: 5px; background: var(--paper3); border-radius: 3px; margin-bottom: 12px; overflow: hidden; }
-  .cl-progress-bar { height: 100%; background: var(--accent); border-radius: 3px; transition: width .4s ease; }
+  .cl-progress { height: 4px; background: var(--border); border-radius: 2px; margin-bottom: 12px; overflow: hidden; }
+  .cl-progress-bar { height: 100%; background: var(--accent); transition: width 0.3s; }
+  .cl-result-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .cl-result-icon { font-size: 18px; }
+  .cl-result-title { font-size: 13px; font-weight: 700; }
+  .cl-result-sub { font-size: 12px; color: var(--ink3); line-height: 1.5; }
   .cl-apply-btn {
-    margin-top: 12px; padding: 8px 16px; border-radius: 7px;
-    background: var(--ink); color: var(--paper); border: none;
-    font-family: 'Be Vietnam Pro', sans-serif; font-size: 13px;
-    font-weight: 500; cursor: pointer; transition: opacity .2s;
+    margin-top: 12px; padding: 8px 14px; border-radius: 6px;
+    background: var(--ink); color: white; border: none;
+    font-size: 12px; font-weight: 600; cursor: pointer;
   }
-  .cl-apply-btn:hover { opacity: 0.8; }
- 
-  /* Collapsible toggle */
-  .section-toggle {
-    display: flex; align-items: center; justify-content: space-between;
-    cursor: pointer; margin-bottom: 14px; user-select: none;
-  }
-  .section-toggle-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent2); }
-  .toggle-chevron { font-size: 12px; color: var(--ink3); transition: transform .2s; }
-  .toggle-chevron.open { transform: rotate(180deg); }
-  .collapsible { overflow: hidden; transition: max-height .3s ease; }
- 
-  /* Animations */
-  .page { animation: fadeUp .5s ease both; }
-  @keyframes fadeUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: none; } }
-  .result-price { transition: opacity .2s; }
-  .result-price.flash { opacity: 0.4; }
 </style>
 </head>
 <body>
@@ -282,6 +281,7 @@
     <div class="header-eyebrow">Góc Kỹ Năng</div>
     <h1>Tính giá commission</h1>
     <p style="margin: 0 auto;">dành cho họa sĩ digital</p>
+    <p class="disclaimer">Lưu ý: Công thức này dành cho phong cách minh họa Anime thông thường, có thể không phù hợp với thị trường Chibi hoặc các phong cách khác. Do thị trường và thị hiếu luôn thay đổi, kết quả chỉ mang tính tham khảo; hãy dùng như hướng dẫn khởi đầu và đối chiếu với bảng giá của các họa sĩ có phong cách và trình độ tương đương.</p>
   </header>
 
   <div class="divider"></div>
@@ -300,41 +300,113 @@
 
   <!-- Factors -->
   <div class="factors-grid">
+    <div class="factor-card" style="grid-column: 1 / -1">
+      <label>Loại shot</label>
+      <div class="choice-row" id="shot-row">
+        <button class="choice-btn" data-val="0.5" onclick="setShot(this)">
+          <span class="choice-icon">◉</span>
+          <span class="choice-name">Headshot</span>
+          <span class="choice-sub">Đầu + vai</span>
+          <span class="choice-mult">×0.5</span>
+        </button>
+        <button class="choice-btn" data-val="0.7" onclick="setShot(this)">
+          <span class="choice-icon">◑</span>
+          <span class="choice-name">Bust</span>
+          <span class="choice-sub">Đến ngực</span>
+          <span class="choice-mult">×0.7</span>
+        </button>
+        <button class="choice-btn active" data-val="1" onclick="setShot(this)">
+          <span class="choice-icon">◐</span>
+          <span class="choice-name">Halfbody</span>
+          <span class="choice-sub">Eo / hông</span>
+          <span class="choice-mult">×1.0</span>
+        </button>
+        <button class="choice-btn" data-val="1.3" onclick="setShot(this)">
+          <span class="choice-icon">▣</span>
+          <span class="choice-name">3/4 body</span>
+          <span class="choice-sub">Đầu gối</span>
+          <span class="choice-mult">×1.3</span>
+        </button>
+        <button class="choice-btn" data-val="1.5" onclick="setShot(this)">
+          <span class="choice-icon">□</span>
+          <span class="choice-name">Fullbody</span>
+          <span class="choice-sub">Toàn thân</span>
+          <span class="choice-mult">×1.5</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- First row of side-by-side: Loại tranh & Độ phức tạp -->
     <div class="factor-card">
-      <label>Loại tranh</label>
+      <label>Loại tranh / Màu sắc</label>
       <select id="type" onchange="calc()">
-        <option value="1">Sketch / lineart đơn giản</option>
-        <option value="1.5">Lineart + flat color</option>
-        <option value="2" selected>Full color (shading cơ bản)</option>
-        <option value="2.8">Full color (shading phức tạp)</option>
-        <option value="3.5">Illustration hoàn chỉnh / scene</option>
+        <option value="1">Sketch / Lineart đơn giản</option>
+        <option value="1.5">Lineart + Flat color</option>
+        <option value="2" selected>Full color (Shading cơ bản)</option>
+        <option value="2.8">Full color (Shading phức tạp)</option>
+        <option value="3.5">Illustration hoàn chỉnh / Scene</option>
       </select>
     </div>
-    <div class="factor-card">
-      <label>Số nhân vật</label>
-      <select id="chars" onchange="calc()">
-        <option value="1" selected>1 nhân vật</option>
-        <option value="1.5">2 nhân vật</option>
-        <option value="2">3+ nhân vật</option>
-      </select>
-    </div>
+
     <div class="factor-card">
       <label>Độ phức tạp trang phục</label>
       <select id="complexity" onchange="calc()">
-        <option value="0.9">Đơn giản (outfit thường)</option>
+        <option value="0.9">Đơn giản (Outfit thường)</option>
         <option value="1" selected>Bình thường</option>
-        <option value="1.3">Phức tạp (giáp, cánh, trang sức...)</option>
-        <option value="1.6">Rất phức tạp (OC chi tiết cao)</option>
+        <option value="1.3">Phức tạp (Giáp, cánh...)</option>
+        <option value="1.6">Rất phức tạp (OC chi tiết)</option>
       </select>
     </div>
+
+    <!-- Second row of side-by-side: Độ gấp & Quyền sử dụng -->
     <div class="factor-card">
-      <label>Quyền sử dụng của khách</label>
-      <select id="usage" onchange="calc()">
-        <option value="1" selected>Cá nhân (avatar, lưu giữ)</option>
-        <option value="1.4">Online công khai (stream, SNS)</option>
-        <option value="2">Thương mại (bán hàng, quảng cáo)</option>
-      </select>
+      <label>Độ gấp (Deadline)</label>
+      <div class="choice-row" id="rush-row">
+        <button class="choice-btn active" data-rush="1" onclick="setRush(this)">
+          <span class="choice-icon">⏳</span>
+          <span class="choice-name">Bình thường</span>
+          <span class="choice-sub">1–2 tuần</span>
+          <span class="choice-mult">×1.0</span>
+        </button>
+        <button class="choice-btn" data-rush="1.3" onclick="setRush(this)">
+          <span class="choice-icon">⚡</span>
+          <span class="choice-name">Gấp</span>
+          <span class="choice-sub">3–5 ngày</span>
+          <span class="choice-mult">×1.3</span>
+        </button>
+        <button class="choice-btn" data-rush="1.6" onclick="setRush(this)">
+          <span class="choice-icon">🔥</span>
+          <span class="choice-name">Rất gấp</span>
+          <span class="choice-sub">24–48 giờ</span>
+          <span class="choice-mult">×1.6</span>
+        </button>
+      </div>
     </div>
+
+    <div class="factor-card">
+      <label>Quyền sử dụng</label>
+      <div class="choice-row" id="usage-row">
+        <button class="choice-btn active" data-usage="1" onclick="setUsage(this)">
+          <span class="choice-icon">👤</span>
+          <span class="choice-name">Cá nhân</span>
+          <span class="choice-sub">Avatar, lưu giữ</span>
+          <span class="choice-mult">×1.0</span>
+        </button>
+        <button class="choice-btn" data-usage="1.4" onclick="setUsage(this)">
+          <span class="choice-icon">📺</span>
+          <span class="choice-name">Online</span>
+          <span class="choice-sub">Stream, SNS</span>
+          <span class="choice-mult">×1.4</span>
+        </button>
+        <button class="choice-btn" data-usage="2" onclick="setUsage(this)">
+          <span class="choice-icon">💰</span>
+          <span class="choice-name">Thương mại</span>
+          <span class="choice-sub">Bán hàng, AD</span>
+          <span class="choice-mult">×2.0</span>
+        </button>
+      </div>
+    </div>
+
     <div class="factor-card" style="grid-column: 1 / -1">
       <label>Thời gian hoàn thành ước tính</label>
       <div class="range-wrap">
@@ -351,20 +423,18 @@
   <!-- Result -->
   <div class="result-section">
     <div class="result-card">
-      <div class="result-top">
-        <div>
-          <div class="result-label">Khoảng giá gợi ý</div>
-          <div class="result-price" id="price-display">—</div>
-          <div class="result-hourly" id="hourly-display"></div>
-        </div>
-        <span class="tier-pill" id="tier-badge"></span>
+      <div>
+        <div class="result-label">Khoảng giá gợi ý</div>
+        <div class="result-price" id="price-display">—</div>
+        <div class="result-hourly" id="hourly-display"></div>
       </div>
+      <div class="tier-pill" id="tier-badge"></div>
     </div>
 
     <div class="tips-card" id="tips-card"></div>
 
     <div class="formula-card">
-      <div class="formula-label">Công thức tính</div>
+      <div class="formula-label">Công thức logic</div>
       <div class="formula-text" id="formula-display"></div>
     </div>
   </div>
@@ -375,9 +445,9 @@
   <div class="checklist-section">
     <div class="section-toggle" onclick="toggleChecklist()">
       <span class="section-toggle-label">✦ Chưa biết mình ở trình độ nào? Làm checklist này</span>
-      <span class="toggle-chevron open" id="cl-chevron">▼</span>
+      <span class="toggle-chevron" id="cl-chevron">▶</span>
     </div>
-    <div class="collapsible" id="cl-body" style="max-height: 1000px;">
+    <div class="collapsible" id="cl-body" style="max-height: 0px;">
       <p class="checklist-intro">Tick vào những điều <strong>bạn có thể làm một cách ổn định</strong> — không phải "đôi khi làm được". Tool sẽ tự gợi ý trình độ phù hợp.</p>
  
       <div class="checklist-group">
@@ -461,9 +531,9 @@
   <div class="checklist-section" style="grid-column: 1 / -1; margin-top: 10px;">
     <div class="section-toggle" onclick="toggleCx()">
       <span class="section-toggle-label">✦ Không chắc trang phục của bạn thuộc loại nào?</span>
-      <span class="toggle-chevron open" id="cx-chevron">▼</span>
+      <span class="toggle-chevron" id="cx-chevron">▶</span>
     </div>
-    <div class="collapsible" id="cx-body" style="max-height: 1000px;">
+    <div class="collapsible" id="cx-body" style="max-height: 0px;">
         <div class="cx-grid">
           <div class="cx-card" onclick="setCx(this, '0.9')" data-val="0.9">
             <div class="cx-card-top">
@@ -516,6 +586,9 @@
             </div>
           </div>
         </div>
+        <div style="text-align: center; margin-top: 16px;">
+          <button class="cl-apply-btn" id="cx-apply-btn" style="display:none" onclick="applyCx()">Áp dụng độ phức tạp này ↑</button>
+        </div>
       </div>
     </div>
   </div>
@@ -533,6 +606,9 @@
 
 <script>
 let skillVal = 2;
+let shotVal = 1;
+let rushVal = 1;
+let usageVal = 1;
 
 const tiers = [
   { max: 80000, label: "Mới bắt đầu", color: "#6b6860", tips: [
@@ -562,7 +638,7 @@ const tiers = [
   ]}
 ];
 
-const hourlyBase = [0, 15000, 30000, 60000, 110000, 180000];
+const hourlyBase = [0, 10000, 20000, 30000, 80000, 130000];
 
 function setSkill(btn) {
   document.querySelectorAll('.skill-btn').forEach(b => b.classList.remove('active'));
@@ -571,6 +647,12 @@ function setSkill(btn) {
   calc();
 }
 
+function setRush(btn) {
+  document.querySelectorAll('#rush-row .choice-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  rushVal = +btn.dataset.rush;
+  calc();
+}
 function fmt(n) {
   if (n >= 1000000) return (n/1000000).toFixed(1).replace(/\.0$/, '') + 'M';
   if (n >= 1000) return Math.round(n/1000) + 'K';
@@ -579,15 +661,13 @@ function fmt(n) {
 
 function calc() {
   const type = +document.getElementById('type').value;
-  const chars = +document.getElementById('chars').value;
   const complexity = +document.getElementById('complexity').value;
   const hours = +document.getElementById('hours').value;
-  const usage = +document.getElementById('usage').value;
 
   document.getElementById('hours-val').textContent = hours + ' giờ';
 
   const base = hourlyBase[skillVal];
-  let price = base * hours * type * chars * complexity * usage;
+  let price = base * hours * type * complexity * usageVal * shotVal * rushVal;
 
   let lo, hi;
   if (price < 50000)       { lo = Math.max(5000,  Math.round(price*0.8/5000)*5000);   hi = Math.round(price*1.3/5000)*5000; }
@@ -596,11 +676,7 @@ function calc() {
   else                     { lo = Math.round(price*0.8/100000)*100000;                 hi = Math.round(price*1.2/100000)*100000; }
 
   const priceEl = document.getElementById('price-display');
-  priceEl.classList.add('flash');
-  setTimeout(() => {
-    priceEl.textContent = fmt(lo) + ' – ' + fmt(hi) + ' đ';
-    priceEl.classList.remove('flash');
-  }, 120);
+  priceEl.textContent = fmt(lo) + ' – ' + fmt(hi) + ' đ';
 
   document.getElementById('hourly-display').textContent = '≈ ' + fmt(base) + ' đ/giờ theo trình độ của bạn';
 
@@ -617,13 +693,25 @@ function calc() {
   ).join('');
   document.getElementById('tips-card').innerHTML =
     `<div class="tips-title">Gợi ý cho giai đoạn này</div>` + tipsHtml;
-
-  const typeLabel = document.getElementById('type').selectedOptions[0].text.split(' (')[0];
-  const charsLabel = document.getElementById('chars').selectedOptions[0].text;
-  const complexLabel = document.getElementById('complexity').selectedOptions[0].text.split(' (')[0];
-  const usageLabel = document.getElementById('usage').selectedOptions[0].text.split(' (')[0];
+  const shotName = document.querySelector('#shot-row .choice-btn.active .choice-name')?.textContent || 'Halfbody';
+  const rushName = document.querySelector('#rush-row .choice-btn.active .choice-name')?.textContent || 'Bình thường';
+  const usageName = document.querySelector('#usage-row .choice-btn.active .choice-name')?.textContent || 'Cá nhân';
   document.getElementById('formula-display').innerHTML =
-    `<span>${fmt(base)}đ/giờ</span> × ${hours}h × ${type}× (loại tranh) × ${chars}× (nhân vật) × ${complexity}× (độ phức tạp) × ${usage}× (quyền dùng)`;
+    `<span>${fmt(base)}đ/giờ</span> × ${hours}h × ${shotVal}× (${shotName}) × ${type}× (tranh) × ${complexity}× (phức tạp) × ${rushVal}× (${rushName}) × ${usageVal}× (${usageName})`;
+}
+// Shot type selector
+function setShot(btn) {
+  document.querySelectorAll('#shot-row .choice-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  shotVal = +btn.dataset.val;
+  calc();
+}
+
+function setUsage(btn) {
+  document.querySelectorAll('#usage-row .choice-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  usageVal = +btn.dataset.usage;
+  calc();
 }
 
 // Complexity explainer
@@ -632,18 +720,20 @@ function toggleCx() {
   const chevron = document.getElementById('cx-chevron');
   const isOpen = body.style.maxHeight !== '0px';
   body.style.maxHeight = isOpen ? '0px' : '1000px';
-  chevron.classList.toggle('open', !isOpen);
+  chevron.textContent = isOpen ? '▶' : '▼';
 }
 
 function setCx(card, val) {
   document.querySelectorAll('.cx-card').forEach(c => c.classList.remove('active'));
   card.classList.add('active');
   document.getElementById('complexity').value = val;
+  document.getElementById('cx-apply-btn').style.display = 'inline-block';
   calc();
-  
-  // Collapse and scroll back to skill section
+}
+
+function applyCx() {
   toggleCx();
-  document.getElementById('skill-section').scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('complexity').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
  
 function syncCx(val) {
@@ -711,7 +801,7 @@ function toggleChecklist() {
   const chevron = document.getElementById('cl-chevron');
   const isOpen = body.style.maxHeight !== '0px';
   body.style.maxHeight = isOpen ? '0px' : '1000px';
-  chevron.classList.toggle('open', !isOpen);
+  chevron.textContent = isOpen ? '▶' : '▼';
 }
 
 calc();
